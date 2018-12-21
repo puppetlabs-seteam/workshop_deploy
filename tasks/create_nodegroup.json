@@ -1,0 +1,12 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Create the Workshop nodegroup in PE",
+    "parameters": {
+        "master": {
+            "description": "The certname of the PE Master",
+            "type": "String[1]"
+            }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Creates a Code Manager webhook in puppetlabs-seteam/workshop-control-repo in Github",
+    "parameters": {
+        "username": {
+            "description": "The username for connecting to Github",
+            "type": "String[1]",
+            "sensitive": true
+            },
+        "password": {
+            "description": "The password for connecting to Github",
+            "type": "String[1]",
+            "sensitive": true
+            }
+    }
+}

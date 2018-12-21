@@ -1,0 +1,13 @@
+{
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "description": "Kick off update classes",
+  "files": ["workshop_deploy/files/nc_https.rb"],
+  "input_method": "stdin",
+  "parameters": {
+    "environment": {
+      "description": "Environment to update classes for",
+      "type": "Optional[String[1]]"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Prepares the system for Puppet Enterprise installation",
+    "parameters": {
+        "admin_pwd": {
+            "description": "The password for the admin account in PE",
+            "type": "String[1]",
+            "sensitive": true
+            }
+    }
+}
