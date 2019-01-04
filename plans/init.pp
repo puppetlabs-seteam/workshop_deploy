@@ -82,6 +82,7 @@ plan workshop_deploy(
   upload_file('workshop_deploy/csr_attributes.yaml', '/etc/puppetlabs/puppet/csr_attributes.yaml', $nodes, 'Upload CSR attributes file...')
 
   run_task(workshop_deploy::install_pe, $nodes, 'Install latest version of Puppet Enterprise...', 'admin_pwd' => "${pe_admin_pwd}")
+  run_task(workshop_deploy::configure_autosign, $nodes, 'Configure Autosigning...')
 
   run_command('chown -R pe-puppet:pe-puppet /etc/puppetlabs/puppetserver/ssh', $nodes, 'Set file ownership...')
   run_command('/opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --no-splay --no-usecacheonfailure --verbose', $nodes, 'Run Puppet Agent to complete installation...')
