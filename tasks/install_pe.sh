@@ -4,6 +4,7 @@ if [ $? -eq 0 ]; then
   echo 'Puppet Enterprise is already installed, skipping installation.'
 else
   cat > ~/pe.conf << FILE
+"pe_install::puppet_master_dnsaltnames": ["master"]
 "puppet_enterprise::puppet_master_host": "%{::trusted.certname}"
 "puppet_enterprise::profile::master::code_manager_auto_configure": true
 "puppet_enterprise::profile::master::r10k_remote": "https://github.com/puppetlabs-seteam/workshop-control-repo.git"
