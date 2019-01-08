@@ -11,6 +11,8 @@ else
 "puppet_enterprise::profile::master::r10k_private_key": "/etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa"
 FILE
 
+  sed -i -r -e '/^\s*Defaults\s+secure_path/ s[=(.*)[=\1:/opt/puppetlabs/bin[' /etc/sudoers
+
   echo '"console_admin_password": "'$PT_admin_pwd'"' >> ~/pe.conf
 
   mkdir ~/.puppetlabs
