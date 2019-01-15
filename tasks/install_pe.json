@@ -8,6 +8,11 @@
             "description": "The password for the admin account in PE",
             "type": "String[1]",
             "sensitive": true
+            },
+        "username": {
+            "description": "The username for connecting to Github",
+            "type": "String[1]",
+            "sensitive": true
             }
     }
 }
