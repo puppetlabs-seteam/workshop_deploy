@@ -64,12 +64,9 @@ plan workshop_deploy(
   run_command('ssh-keygen -t rsa -b 4096 -N "" -f /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa', $nodes, 'Generate keys...')
   run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
 
-  #run_task(workshop_deploy::firewall_ports, $nodes, 'Open firewall ports...')
+  run_task(workshop_deploy::firewall_ports, $nodes, 'Open firewall ports if firewalld is installed...')
 
   upload_file('workshop_deploy/license.enc', '/etc/puppetlabs/license.enc', $nodes, 'Upload encrypted license key...')
-  #upload_file('workshop_deploy/id-control_repo.enc',     '/etc/puppetlabs/puppetserver/ssh/id-control_repo.enc', $nodes, 'Upload encrypted private key file...')
-  #upload_file('workshop_deploy/id-control_repo.rsa.pub', '/etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub', $nodes, 'Upload public key file...')
-
   run_task(workshop_deploy::decode_files, $nodes, 'Decoding encrypted files...')
 
   notice('Securing key files...')
