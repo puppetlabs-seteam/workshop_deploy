@@ -120,10 +120,9 @@ change_default_branch() {
 }
 
 add_deploy_key() {
-  $key=$1
   json='{
     "title": "workshop@puppet",
-    "key": "'$key'",
+    "key": "'$1'",
     "read_only": true
   }'
 
@@ -169,4 +168,6 @@ create_branch master $sha_id
 create_branch production $sha_id
 protect_branch workshop_init
 change_default_branch master
-add_deploy_key $(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
+
+rsa_key=$(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
+add_deploy_key "${rsa_key}"
