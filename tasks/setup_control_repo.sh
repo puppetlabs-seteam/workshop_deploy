@@ -118,6 +118,42 @@ change_default_branch() {
     exit 1
   fi
 }
+
+add_deploy_key() {
+  $key=$1
+  json='{
+    "title": "workshop@puppet",
+    "key": "'$key'",
+    "read_only": true
+  }'
+
+  if curl --user "${PT_username}":"${PT_password}" -i -s -X GET \
+    "https://api.github.com/repos/${PT_username}/workshop-control-repo/keys/1" \
+    | grep "HTTP/1.1 200 OK"
+  then
+    echo "Existing key detected, removing it first..."
+    if curl --user "${PT_username}":"${PT_password}" -i -s -X DELETE \
+      "https://api.github.com/repos/${PT_username}/workshop-control-repo/keys/1" \
+      | grep "HTTP/1.1 204 No Content"
+    then
+      echo "Successfully deleted key 1 from ${PT_username}/workshop-control-repo"
+    else
+      echo "Error trying to delete key 1 from ${PT_username}/workshop-control-repo! Exiting..."
+      exit 1
+    fi 
+  fi
+
+  if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
+    "https://api.github.com/repos/${PT_username}/workshop-control-repo/keys" \
+    -H 'Content-Type: application/json' \
+    -d "${json}" | grep "HTTP/1.1 201 Created"
+  then
+    echo "Successfully added RSA deploy key"
+  else
+    echo "Failed to add RSA deploy key!"
+    exit 1
+  fi
+}
 #/////////////////////////////////////////////////////////////////////////////////////////////
 # End of functions for use in script
 
@@ -133,3 +169,4 @@ create_branch master $sha_id
 create_branch production $sha_id
 protect_branch workshop_init
 change_default_branch master
+add_deploy_key $(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
