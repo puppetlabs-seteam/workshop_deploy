@@ -7,7 +7,7 @@ else
 "pe_install::puppet_master_dnsaltnames": ["master"]
 "puppet_enterprise::puppet_master_host": "%{::trusted.certname}"
 "puppet_enterprise::profile::master::code_manager_auto_configure": true
-"puppet_enterprise::profile::master::r10k_remote": "https://github.com/puppetlabs-seteam/workshop-control-repo.git"
+"puppet_enterprise::profile::master::r10k_remote": "https://github.com/${PT_username}/workshop-control-repo.git"
 "puppet_enterprise::profile::master::r10k_private_key": "/etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa"
 FILE
 

@@ -11,8 +11,9 @@ plan workshop_deploy(
   wait_until_available($nodes, description => 'Waiting up to 5 minutes until AWS instance becomes available...', wait_time => 300, retry_interval => 15)
 
   run_task(workshop_deploy::check_github_creds, $nodes, 'Checking Github credentials...', 'username' => $github_user, 'password' => $github_pwd)
+  run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
   run_task(workshop_deploy::download_pe, $nodes, 'Download latest version of Puppet Enterprise...')
-  run_task(workshop_deploy::prep_pe, $nodes, 'Run preparatory steps for Puppet Enterprise...', 'admin_pwd' => "${pe_admin_pwd}")
+  run_task(workshop_deploy::prep_pe, $nodes, 'Run preparatory steps for Puppet Enterprise...', 'username' => $github_user, 'admin_pwd' => $pe_admin_pwd)
 
   apply_prep($nodes)
 
@@ -81,7 +82,7 @@ plan workshop_deploy(
 
   upload_file('workshop_deploy/csr_attributes.yaml', '/etc/puppetlabs/puppet/csr_attributes.yaml', $nodes, 'Upload CSR attributes file...')
 
-  run_task(workshop_deploy::install_pe, $nodes, 'Install latest version of Puppet Enterprise...', 'admin_pwd' => "${pe_admin_pwd}")
+  run_task(workshop_deploy::install_pe, $nodes, 'Install latest version of Puppet Enterprise...', 'username' => $github_user, 'admin_pwd' => $pe_admin_pwd)
   run_task(workshop_deploy::configure_autosign, $nodes, 'Configure Autosigning...')
 
   run_command('chown -R pe-puppet:pe-puppet /etc/puppetlabs/puppetserver/ssh', $nodes, 'Set file ownership...')
@@ -105,7 +106,7 @@ plan workshop_deploy(
     }
   }
 
-  run_task(workshop_deploy::generate_token, $nodes, 'Generate RBAC Token...', 'admin_pwd' => "${pe_admin_pwd}")
+  run_task(workshop_deploy::generate_token, $nodes, 'Generate RBAC Token...', 'admin_pwd' => $pe_admin_pwd)
   run_command('/opt/puppetlabs/bin/puppet-code deploy production --wait', $nodes, 'Deploy latest Puppet code...')
 
   run_task(workshop_deploy::update_classes, $nodes, 'Update classes...', 'environment' => 'production')

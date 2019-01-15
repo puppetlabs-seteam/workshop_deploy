@@ -14,7 +14,7 @@ json='{
 }'
 
 if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
-  https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/hooks \
+  "https://api.github.com/repos/${PT_username}/workshop-control-repo/hooks" \
   -H 'Content-Type: application/json' \
   -d "${json}" | grep "HTTP/1.1 201 Created"
 then
