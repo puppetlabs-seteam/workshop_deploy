@@ -11,7 +11,6 @@ plan workshop_deploy(
   wait_until_available($nodes, description => 'Waiting up to 5 minutes until AWS instance becomes available...', wait_time => 300, retry_interval => 15)
 
   run_task(workshop_deploy::check_github_creds, $nodes, 'Checking Github credentials...', 'username' => $github_user, 'password' => $github_pwd)
-  run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
   run_task(workshop_deploy::download_pe, $nodes, 'Download latest version of Puppet Enterprise...')
   run_task(workshop_deploy::prep_pe, $nodes, 'Run preparatory steps for Puppet Enterprise...', 'username' => $github_user, 'admin_pwd' => $pe_admin_pwd)
 
@@ -53,7 +52,6 @@ plan workshop_deploy(
   }
 
   run_command("hostnamectl set-hostname ${pe_name}", $nodes, 'Set Hostname...')
-  run_command('ssh-keygen -t rsa -b 4096 -N "" -f /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa', $nodes, 'Generate keys...')
 
   notice('Updating /etc/hosts...')
   apply($nodes){
@@ -62,6 +60,9 @@ plan workshop_deploy(
       ip     => $facts['ipaddress']
     }
   }
+
+  run_command('ssh-keygen -t rsa -b 4096 -N "" -f /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa', $nodes, 'Generate keys...')
+  run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
 
   #run_task(workshop_deploy::firewall_ports, $nodes, 'Open firewall ports...')
 
