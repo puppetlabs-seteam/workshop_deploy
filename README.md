@@ -43,7 +43,7 @@ bolt plan run workshop_deploy aws_region=[region] aws_user=[AWS user] github_use
 
 for example:
 ```
-bolt plan run workshop_deploy aws_region="eu-west-3" aws_user="user1" github_user="user1" github_pwd="password" --nodes 1.2.3.4 --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
+bolt plan run workshop_deploy aws_region="eu-west-3" aws_user="user1" github_user="user1" github_pwd="password" --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
 ```
 
 The parameters have the following meaning:
