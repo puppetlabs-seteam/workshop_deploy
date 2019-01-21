@@ -1,16 +1,15 @@
 plan workshop_deploy(
   TargetSpec $nodes,
-  String $aws_region,
-  String $aws_user,
+  TargetSpec $localhost = 'localhost',
+  String $awsregion,
+  String $awsuser,
   String $github_user,
   String $github_pwd,
   String $pe_name = 'master.inf.puppet.vm',
   String $pe_admin_pwd = 'BoltR0cks!',
 ) {
   apply_prep('localhost')
-  #get_targets('localhost').each |$target| {
-  #  add_facts($target, { 'aws_region' => $aws_region, 'aws_user' => $aws_user })
-  #}
+  add_facts($localhost, { 'aws_region' => $awsregion, 'aws_user' => $awsuser })
   apply('localhost'){
     include awskit::create_bolt_workshop_master
   }
