@@ -8,7 +8,7 @@ plan workshop_deploy(
   String $pe_admin_pwd = 'BoltR0cks!',
 ) {
   apply_prep('localhost')
-  add_facts('localhost', { 'aws_region' => $aws_region, 'aws_user' => $aws_user })
+  add_facts(get_targets('localhost'), { 'aws_region' => $aws_region, 'aws_user' => $aws_user })
   apply('localhost'){
     include awskit::create_bolt_workshop_master
   }
