@@ -7,9 +7,10 @@ plan workshop_deploy(
   String $pe_name = 'master.inf.puppet.vm',
   String $pe_admin_pwd = 'BoltR0cks!',
 ) {
-  $localhost = get_targets('localhost')  
-  apply_prep($localhost)
-  add_facts($localhost[0], { 'aws_region' => $awsregion, 'aws_user' => $awsuser })
+  $localhost = get_targets('localhost')
+  apply_prep('localhost')
+  add_facts($localhost[0], { 'aws_region' => $awsregion, 'user' => $awsuser })
+
   apply($localhost){
     include awskit::create_bolt_workshop_master
   }
