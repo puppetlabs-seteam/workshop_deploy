@@ -8,6 +8,7 @@ Add the following to your Puppetfile for Bolt:
 ```
 # Modules from the Puppet Forge
 mod 'puppetlabs-stdlib',       '5.2.0'
+mod 'puppetlabs-aws',          '2.1.0'
 mod 'puppetlabs-yumrepo_core', '1.0.3'
 
 # Modules from Git
