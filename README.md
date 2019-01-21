@@ -39,12 +39,12 @@ awskit::host_config:
 
 Then run the Bolt Plan like this:
 ```
-bolt plan run workshop_deploy aws_region=[region] aws_user=[AWS user] github_user=[github user] github_pwd=[github password] --nodes [AWS public IP for PE master] --user centos --private-key [private key for SSH] --run-as root --no-host-key-check
+bolt plan run workshop_deploy awsregion=[region] awsuser=[AWS user] github_user=[github user] github_pwd=[github password] --nodes [AWS public IP for PE master] --user centos --private-key [private key for SSH] --run-as root --no-host-key-check
 ```
 
 for example:
 ```
-bolt plan run workshop_deploy aws_region="eu-west-3" aws_user="user1" github_user="user1" github_pwd="password" --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
+bolt plan run workshop_deploy awsregion="eu-west-3" awsuser="user1" github_user="user1" github_pwd="password" --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
 ```
 
 The parameters have the following meaning:
