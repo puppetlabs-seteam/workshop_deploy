@@ -2,8 +2,7 @@
 export AWS_REGION=$PT_aws_region
 export FACTER_aws_region=$PT_aws_region
 export FACTER_user=$PT_aws_user
-TASKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-puppet apply -e 'include awskit::create_bolt_workshop_master' --detailed-exitcodes --modulepath "${TASKDIR}/../..:$(puppet config print basemodulepath)"
+puppet apply -e 'include awskit::create_bolt_workshop_master' --detailed-exitcodes
 retval=$?
 if [ $retval -eq 0 ] || [ $retval -eq 2 ]; then
   exit 0
