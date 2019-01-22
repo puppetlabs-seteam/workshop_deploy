@@ -1,4 +1,4 @@
-plan workshop_deploy(
+plan workshop_deploy::targets(
   TargetSpec $nodes,
   String $awsregion,
   String $awsuser,
