@@ -25,6 +25,8 @@ and run `bolt puppetfile install` to sync the modules.
 
 Make sure you have previously configured awskit to deploy a CentOS image for the Bolt workshop that uses a fixed Elastic IP. You'll need the following data in Hiera for your desired AWS region:
 ```
+awskit::boltws_key_name: <key specifically for Bolt targets, that you can share>
+awskit::create_bolt_workshop_targets::master_ip: '<available elastic ip>'
 awskit::host_config:
   <your name>-awskit-boltws-master:
     public_ip: '<available elastic ip>'
@@ -32,6 +34,8 @@ awskit::host_config:
 
 for example:
 ```
+awskit::boltws_key_name: 'kevin-boltws.key-eu-west-3'
+awskit::create_bolt_workshop_targets::master_ip: '35.180.221.85'
 awskit::host_config:
   kevin-awskit-boltws-master:
     public_ip: '35.180.221.85'
