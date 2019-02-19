@@ -121,4 +121,5 @@ plan workshop_deploy(
 
   run_task(workshop_deploy::create_webhook_to_aws, $nodes, 'Creating Webhook...', 'username' => $github_user, 'password' => $github_pwd)
 
+  notice("Installation complete, you can login to PE with username 'admin' and password '${pe_admin_pwd}'")
 }
