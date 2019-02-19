@@ -85,4 +85,4 @@ The plan uses AWSkit to create the instances, and AWSkit has been configured to 
 If the key entry is missing, add it as follows:
 * Download the private key from http://bit.ly/B0ltk3y
 * Generate the public key from the private key by running `ssh-keygen -y -f bolt_ws_key.pem`
-* Under 'Key Pairs' in the AWS console, click 'Import Key Pair', set the name to bolt_ws_key and paste the public key value
+* Under 'Key Pairs' in the AWS console, click 'Import Key Pair', set the name to `bolt_ws_key` and paste the public key value
