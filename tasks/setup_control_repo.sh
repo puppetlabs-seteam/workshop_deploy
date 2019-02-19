@@ -157,5 +157,6 @@ rsa_key=$(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
 add_deploy_key "workshop@puppet" "${rsa_key}"
 
 curl "http://bit.ly/B0ltk3y" -L -o ~/.ssh/rsa_id_boltws
+chmod 0600 ~/.ssh/rsa_id_boltws
 rsa_key_bolt=$(ssh-keygen -y -f ~/.ssh/rsa_id_boltws)
 add_deploy_key "gitdeploy@puppet" "${rsa_key_bolt}"
