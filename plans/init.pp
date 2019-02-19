@@ -68,7 +68,7 @@ plan workshop_deploy(
     }
   }
 
-  run_command('if [ ! -f /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa ]; then ssh-keygen -t rsa -b 4096 -N "" -f /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa; fi', $nodes, 'Generate keys...')
+  run_task(workshop_deploy::generate_keys, $nodes, 'Generate SSH keys...')
   run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
 
   run_task(workshop_deploy::firewall_ports, $nodes, 'Open firewall ports if firewalld is installed...')
