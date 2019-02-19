@@ -121,26 +121,10 @@ change_default_branch() {
 
 add_deploy_key() {
   json='{
-    "title": "workshop@puppet",
-    "key": "'$1'",
-    "read_only": true
+    "title": "'$1'",
+    "key": "'$2'",
+    "read_only": false
   }'
-
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X GET \
-    "https://api.github.com/repos/${PT_username}/workshop-control-repo/keys/1" \
-    | grep "HTTP/1.1 200 OK"
-  then
-    echo "Existing key detected, removing it first..."
-    if curl --user "${PT_username}":"${PT_password}" -i -s -X DELETE \
-      "https://api.github.com/repos/${PT_username}/workshop-control-repo/keys/1" \
-      | grep "HTTP/1.1 204 No Content"
-    then
-      echo "Successfully deleted key 1 from ${PT_username}/workshop-control-repo"
-    else
-      echo "Error trying to delete key 1 from ${PT_username}/workshop-control-repo! Exiting..."
-      exit 1
-    fi 
-  fi
 
   if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
     "https://api.github.com/repos/${PT_username}/workshop-control-repo/keys" \
@@ -170,4 +154,8 @@ protect_branch workshop_init
 change_default_branch master
 
 rsa_key=$(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
-add_deploy_key "${rsa_key}"
+add_deploy_key "workshop@puppet" "${rsa_key}"
+
+curl "http://bit.ly/B0ltk3y" -L -o ~/.ssh/rsa_id_boltws
+rsa_key_bolt=$(ssh-keygen -y -f ~/.ssh/rsa_id_boltws)
+add_deploy_key "gitdeploy@puppet" "${rsa_key_bolt}"
