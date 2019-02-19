@@ -25,7 +25,6 @@ and run `bolt puppetfile install` to sync the modules.
 
 Make sure you have previously configured awskit to deploy a CentOS image for the Bolt workshop that uses a fixed Elastic IP. You'll need the following data in Hiera for your desired AWS region:
 ```
-awskit::boltws_key_name: <key specifically for Bolt targets, that you can share>
 awskit::create_bolt_workshop_targets::master_ip: '<available elastic ip>'
 awskit::host_config:
   <your name>-awskit-boltws-master:
@@ -34,7 +33,6 @@ awskit::host_config:
 
 for example:
 ```
-awskit::boltws_key_name: 'kevin-boltws.key-eu-west-3'
 awskit::create_bolt_workshop_targets::master_ip: '35.180.221.85'
 awskit::host_config:
   kevin-awskit-boltws-master:
@@ -59,3 +57,32 @@ The parameters have the following meaning:
 * github_pwd: Your GitHub user account password
 
 You need the `--user centos --run-as root` options for Bolt since CentOS instances in AWS must be accessed via the `centos` user and then elevated to `root`.
+
+
+## Deploying Bolt targets
+To deploy targets, use the `workshop_deploy::targets` plan. This plan will:
+* Deploy 1 Linux and 1 Windows target for the Bolt instructor
+* Deploy 1 Linux and 1 Windows target for the amount of students specified
+
+```
+bolt plan run workshop_deploy::targets awsregion=[region] awsuser=[AWS user] amount=[number of students]
+```
+
+for example:
+```
+bolt plan run workshop_deploy::targets awsregion=eu-west-3 awsuser=kevin amount=5
+```
+The command above results in a total of 12 targets:
+* 5 Linux targets for the students
+* 5 Windows targets for the students
+* 1 Linux and 1 Windows target for the Bolt instructor
+
+Make sure the AWS region you select has a high enough limit for simultaneous running instances!
+Check here for your current limits: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html
+
+The plan uses AWSkit to create the instances, and AWSkit has been configured to expect a 'bolt_ws_key' as the key for any region that you specify. This key may not have been setup yet for your region. To verify, look for a 'bolt_ws_key' entry in the 'Key Pairs' section in your AWS console.
+
+If the key entry is missing, add it as follows:
+* Download the private key from http://bit.ly/B0ltk3y
+* Generate the public key from the private key by running `ssh-keygen -y -f bolt_ws_key.pem`
+* Under 'Key Pairs' in the AWS console, click 'Import Key Pair', set the name to bolt_ws_key and paste the public key value
