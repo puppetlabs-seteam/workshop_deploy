@@ -140,7 +140,7 @@ add_deploy_key() {
 
 create_file() {
   json='{
-    "message": "Add encrypted deploy key",
+    "message": "Add file",
     "content": "'$2'"
   }'
 
@@ -178,3 +178,9 @@ add_deploy_key "workshop@puppet" "${rsa_key}"
 base64 -i /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa > ~/workshop_key.enc
 encrypted_key=$(base64 -i -w0 ~/workshop_key.enc)
 create_file "workshop_key.enc" "${encrypted_key}"
+
+prep_ps1=$(base64 -i -w0 ~/prep.ps1)
+create_file "prep.ps1" "${prep_ps1}"
+
+prep_sh=$(base64 -i -w0 ~/prep.sh)
+create_file "prep.sh" "${prep_sh}"
