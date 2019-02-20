@@ -8,7 +8,7 @@ host github.com
 EOF
 
 curl "https://raw.githubusercontent.com/<%= $github_user %>/workshop-control-repo/master/workshop_key.enc" -L -o ~/workshop_key.enc
-base64 -d ~/workshop_key.enc > ~/.ssh/id_rsa_boltws
+base64 --decode ~/workshop_key.enc > ~/.ssh/id_rsa_boltws
 ssh -oStrictHostKeyChecking=no -T git@github.com
 
 echo "Done configuring SSH."
