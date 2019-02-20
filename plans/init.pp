@@ -69,6 +69,19 @@ plan workshop_deploy(
   }
 
   run_task(workshop_deploy::generate_keys, $nodes, 'Generate SSH keys...')
+  
+  notice('Generating Control Repo student prep scripts...')
+  apply($nodes){
+    file { '/root/prep.ps1':
+      ensure  => file,
+      content => epp('workshop_deploy/prep_ps1.epp', { 'github_user' => $github_user })
+    }
+    file { '/root/prep.sh':
+      ensure  => file,
+      content => epp('workshop_deploy/prep_sh.epp', { 'github_user' => $github_user })
+    }
+  }
+  
   run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
 
   run_task(workshop_deploy::firewall_ports, $nodes, 'Open firewall ports if firewalld is installed...')
