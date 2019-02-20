@@ -1,9 +1,9 @@
 
 # Bolt Workshop automated deployment of PE with Bolt
 
-**Note: the deployment of AWS instances through this Bolt Plan currently does not work if you're using the bastion account**
-**This is due to the temporary MFA credentials (in your environment vars) not getting to the plan's runtime context**
-**A solution for this problem is being investigated**
+**Note: the deployment of AWS instances through this Bolt Plan currently does not work if you're using the bastion account.
+This is due to the temporary MFA credentials (in your environment vars) not getting to the plan's runtime context.
+A solution for this problem is being investigated.**
 
 To deploy PE in AWS with this module, do the following:
 
