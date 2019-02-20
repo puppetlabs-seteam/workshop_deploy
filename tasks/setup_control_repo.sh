@@ -137,6 +137,25 @@ add_deploy_key() {
     exit 1
   fi
 }
+
+create_file() {
+  json='{
+    "message": "Add encrypted deploy key",
+    "content": "'$2'"
+  }'
+
+  if curl --user "${PT_username}":"${PT_password}" -i -s -X PUT \
+    "https://api.github.com/repos/${PT_username}/workshop-control-repo/contents/$1" \
+    -H 'Content-Type: application/json' \
+    -d "${json}" | grep "HTTP/1.1 201 Created"
+  then
+    echo "Successfully created deploy key in control repo"
+  else
+    echo "Failed to create deploy key in control repo!"
+    exit 1
+  fi
+}
+
 #/////////////////////////////////////////////////////////////////////////////////////////////
 # End of functions for use in script
 
@@ -156,7 +175,6 @@ change_default_branch master
 rsa_key=$(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
 add_deploy_key "workshop@puppet" "${rsa_key}"
 
-curl "http://bit.ly/B0ltk3y" -L -o ~/.ssh/rsa_id_boltws
-chmod 0600 ~/.ssh/rsa_id_boltws
-rsa_key_bolt=$(ssh-keygen -y -f ~/.ssh/rsa_id_boltws)
-add_deploy_key "gitdeploy@puppet" "${rsa_key_bolt}"
+base64 -i /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa > ~/workshop_key.enc
+encrypted_key=$(base64 -i -w0 ~/workshop_key.enc)
+create_file "workshop_key.enc" "${encrypted_key}"
