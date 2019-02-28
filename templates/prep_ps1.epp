@@ -7,6 +7,7 @@ host github.com
 '
 
 Write-Host "Configuring SSH for Bolt Workshop..."
+New-Item -ItemType Directory -Force -Path ~/.ssh
 Add-Content -Value $ssh_config -Path ~/.ssh/config
 iwr -Uri "https://raw.githubusercontent.com/<%= $github_user %>/workshop-control-repo/master/workshop_key.enc" -OutFile ~/workshop_key.enc
 $content = Get-Content ~/workshop_key.enc
@@ -14,3 +15,8 @@ $content = Get-Content ~/workshop_key.enc
 "$(ssh -oStrictHostKeyChecking=no -T git@github.com 2>&1)"
 
 Write-Host "Done configuring SSH."
+
+cd ~
+Write-Host "Cloning Workshop Control Repo to $((Get-Location).Path)\workshop-control-repo ..."
+git clone -q git@github.com:<%= $github_user %>/workshop-control-repo
+Write-Host "Done!"
