@@ -167,10 +167,9 @@ sha_id=$(curl --user "${PT_username}":"${PT_password}" -X GET \
   "https://api.github.com/repos/${PT_username}/workshop-control-repo/git/refs/heads/workshop_init" \
   | grep '"sha"' | awk '{split($0,a, "\""); print a[4]}')
 
-create_branch master $sha_id
 create_branch production $sha_id
 protect_branch workshop_init
-change_default_branch master
+change_default_branch production
 
 rsa_key=$(cat /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)
 add_deploy_key "workshop@puppet" "${rsa_key}"
