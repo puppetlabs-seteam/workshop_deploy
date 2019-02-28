@@ -8,7 +8,12 @@ host github.com
 
 Write-Host "Configuring SSH for Bolt Workshop..."
 New-Item -ItemType Directory -Force -Path ~/.ssh
-Add-Content -Value $ssh_config -Path ~/.ssh/config
+If ( Get-Content ~/.ssh/config -ErrorAction SilentlyContinue | %{$_ -match "host github.com"} ) {
+  Write-Host "~/.ssh/config is already configured, skipping modification."
+}
+Else {
+  Add-Content -Value $ssh_config -Path ~/.ssh/config
+}
 iwr -Uri "https://raw.githubusercontent.com/<%= $github_user %>/workshop-control-repo/master/workshop_key.enc" -OutFile ~/workshop_key.enc
 $content = Get-Content ~/workshop_key.enc
 [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($content)) | Out-File -Encoding "ASCII" ~/.ssh/id_rsa_boltws
