@@ -25,7 +25,7 @@ If (!(Test-Path $RegPath)) {
   New-Item -Path $RegPath
 }
 
-If (!((Get-ItemProperty -Path "HKLM:SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -ErrorAction SilentlyContinue).DisableAntiSpyware -eq 1)) {
+If (!((Get-ItemProperty -Path $RegPath -Name "DisableAntiSpyware" -ErrorAction SilentlyContinue).DisableAntiSpyware -eq 1)) {
   New-ItemProperty -Path $RegPath -Name "DisableAntiSpyware" -PropertyType DWORD -Value 1 -Force
   Restart-Computer -Force -AsJob
 }
