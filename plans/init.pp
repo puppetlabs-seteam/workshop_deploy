@@ -6,15 +6,18 @@ plan workshop_deploy(
   String $github_pwd,
   String $pe_name = 'master.inf.puppet.vm',
   String $pe_admin_pwd = 'BoltR0cks!',
+  Boolean $bastion = false,
 ) {
-  $localhost = get_targets('localhost')
-  apply_prep('localhost')
-  add_facts($localhost[0], { 'aws_region' => $awsregion, 'user' => $awsuser })
-  notice("Deploy CentOS instance on AWS using awskit...")
-  apply($localhost){
-    include awskit::create_bolt_workshop_master
+  if $bastion == false {
+    $localhost = get_targets('localhost')
+    apply_prep('localhost')
+    add_facts($localhost[0], { 'aws_region' => $awsregion, 'user' => $awsuser })
+    notice("Deploy CentOS instance on AWS using awskit...")
+    apply($localhost){
+      include awskit::create_bolt_workshop_master
+    }
   }
-  
+
   wait_until_available($nodes, description => 'Waiting up to 5 minutes until AWS instance becomes available...', wait_time => 300, retry_interval => 15)
 
   run_task(workshop_deploy::check_github_creds, $nodes, 'Checking Github credentials...', 'username' => $github_user, 'password' => $github_pwd)
