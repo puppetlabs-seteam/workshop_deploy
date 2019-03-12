@@ -13,7 +13,7 @@ plan workshop_deploy(
     notice("Info: Using AWS region: ${awsregion}")
     notice("Info: Using AWS user: ${awsuser}")
     run_task(workshop_deploy::awskit_ensure_prereqs, 'localhost', 'Ensuring AWSkit prereqs are met... ' )
-    run_task(workshop_deploy::awskit_deploy_master, 'localhost', 'Deploy workshop PE Master on AWS using AWSKit... ', 'bastion' => $bastion, 'awsregion' => $awsregion, 'awsuser' => $awsuser )
+    run_script('workshop_deploy/awskit_deploy_master.sh', 'localhost', 'Deploy workshop PE Master on AWS using AWSKit... ', 'arguments' => [ "bastion=${bastion}", "awsregion=${awsregion}", "awsuser=${awsuser}" ] )
   }
   elsif $bastion == true {
     notice("Info: Using the Bastion account for AWS, make sure 'source ./scripts/exportcreds.sh' has been run!")
@@ -23,7 +23,7 @@ plan workshop_deploy(
     $awssecret  = system::env('AWS_SECRET_ACCESS_KEY')
     $awssession = system::env('AWS_SESSION_TOKEN')
     run_task(workshop_deploy::awskit_ensure_prereqs, 'localhost', 'Ensuring AWSkit prereqs are met... ' )
-    run_task(workshop_deploy::awskit_deploy_master, 'localhost', 'Deploy workshop PE Master on AWS using AWSKit... ', 'bastion' => $bastion, 'awsregion' => $awsregion, 'awsuser' => $awsuser, 'awskeyid' => $awskeyid, 'awssecret' => $awssecret, 'awssession' => $awssession )
+    run_script('workshop_deploy/awskit_deploy_master.sh', 'localhost', 'Deploy workshop PE Master on AWS using AWSKit... ', 'arguments' => [ "bastion=${bastion}", "awsregion=${awsregion}", "awsuser=${awsuser}", "awskeyid=${awskeyid}", "awssecret=${awssecret}", "awssession=${awssession}" ] )
   }
 
   wait_until_available($nodes, description => 'Waiting up to 5 minutes until AWS instance becomes available...', wait_time => 300, retry_interval => 15)
