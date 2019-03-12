@@ -13,7 +13,6 @@ mod 'puppetlabs-yumrepo_core', '1.0.3'
 mod 'workshop_deploy',
   :git => 'https://github.com/puppetlabs-seteam/workshop_deploy.git',
   :ref => 'master'
-
 ```
 
 and run `bolt puppetfile install` to sync the modules.
@@ -22,7 +21,7 @@ Make sure you have previously configured AWSKit to deploy a CentOS image for the
 ```
 awskit::create_bolt_workshop_targets::master_ip: '<available elastic ip>'
 awskit::host_config:
-  <your name>-awskit-boltws-master:
+  <your AWSKit username>-awskit-boltws-master:
     public_ip: '<available elastic ip>'
 ```
 
@@ -53,6 +52,21 @@ The parameters have the following meaning:
 
 You need the `--user centos --run-as root` options for Bolt since CentOS instances in AWS must be accessed via the `centos` user and then elevated to `root`.
 
+Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple regions. A Bolt params file is in JSON format and looks like this for the *workshop_deploy* Plan:
+```
+{
+"bastion": true
+"awsregion": "eu-west-3",
+"awsuser": "kevin",
+"github_user": "kreeuwijk",
+"github_pwd": "password",
+"nodes": "35.180.221.85",
+}
+```
+To call the Bolt Plan with the params file (say the filename is `eu-west3-params.json`), do this:
+```
+bolt plan run workshop_deploy --params @eu-west3-params.json
+```
 
 ## Deploying Bolt targets
 To deploy targets, use the `workshop_deploy::targets` plan. This plan will:
