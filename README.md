@@ -65,8 +65,10 @@ Optionally, you can move the parameters into a Bolt params file, which makes it 
 ```
 To call the Bolt Plan with the params file (say the filename is `eu-west3-params.json`), do this:
 ```
-bolt plan run workshop_deploy --params @eu-west3-params.json
+bolt plan run workshop_deploy --params @eu-west3-params.json --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
 ```
+
+Remember that you can eliminate the need to specify the connection info everytime, by adding the node to your inventory.yaml for Bolt!
 
 ## Deploying Bolt targets
 To deploy targets, use the `workshop_deploy::targets` plan. This plan will:
