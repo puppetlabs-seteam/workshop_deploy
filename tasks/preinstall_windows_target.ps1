@@ -20,6 +20,11 @@ $Arguments = @(
     )
 Start-Process "$((Get-Location).Path)\VSCodeSetup-x64-latest.exe" -Wait -ArgumentList $Arguments
 
+$LocalTempDir=$env:TEMP
+$ChromeInstaller="ChromeInstaller.exe"
+(new-object System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/latest/chrome_installer.exe',"$LocalTempDir\$ChromeInstaller")
+Start-Process "$LocalTempDir\$ChromeInstaller" -Wait -ArgumentList @("/silent", "/install")
+
 $RegPath = "HKLM:SOFTWARE\Policies\Microsoft\Windows Defender"
 If (!(Test-Path $RegPath)) {
   New-Item -Path $RegPath
