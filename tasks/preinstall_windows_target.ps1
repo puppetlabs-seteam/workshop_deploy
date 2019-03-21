@@ -31,6 +31,7 @@ If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninsta
             "/norestart"
         )
     Start-Process "msiexec.exe" -Wait -ArgumentList $Arguments
+    Write-Host "Installed Puppet Bolt"
 }
 
 If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Microsoft Visual Studio Code") ) {
@@ -65,6 +66,7 @@ If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninsta
             "/MERGETASKS=!runcode"
         )
     Start-Process "$Env:Temp\VSCodeSetup-x64-latest.exe" -Wait -ArgumentList $Arguments
+    Write-Host "Installed VS Code"
 }
 
 If (! ((Get-ItemProperty HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Google Chrome") ) {
@@ -92,14 +94,17 @@ If (! ((Get-ItemProperty HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVer
     }
 
     Start-Process "$Env:Temp\ChromeInstaller.exe" -Wait -ArgumentList @("/silent", "/install")
+    Write-Host "Installed Google Chrome"
 }
 
 $RegPath = "HKLM:SOFTWARE\Policies\Microsoft\Windows Defender"
 If (!(Test-Path $RegPath)) {
   New-Item -Path $RegPath
+  Write-Host "Created Windows Defender reg key"
 }
 
 If (!((Get-ItemProperty -Path $RegPath -Name "DisableAntiSpyware" -ErrorAction SilentlyContinue).DisableAntiSpyware -eq 1)) {
   New-ItemProperty -Path $RegPath -Name "DisableAntiSpyware" -PropertyType DWORD -Value 1 -Force
-  Restart-Computer -Force -AsJob
+  Write-Host "Created DisableAntiSpyware reg value"
+  Restart-Computer -Force -AsJob -Confirm:$false
 }
