@@ -30,7 +30,9 @@ echo "groups:
     nodes:" > ~/inventory.yaml 
 
 for i in $(seq 1 $1); do
-  puppet resource ec2_instance "$3-awskit-boltws-linux-student$i" | grep public_ip_address | echo "      - $(awk '{split($0,a,"'\''"); print a[2]}')" >> ~/inventory.yaml
+  ip=$(puppet resource ec2_instance "$3-awskit-boltws-linux-student$i" | grep public_ip_address | echo " - $(awk '{split($0,a,"'\''"); print a[2]}')")
+  echo "student$i-Linux$ip"
+  echo "     $ip" >> ~/inventory.yaml
 done
 
 echo "    config:
@@ -44,7 +46,9 @@ echo "    config:
     nodes:" >> ~/inventory.yaml
 
 for i in $(seq 1 $1); do
-  puppet resource ec2_instance "$3-awskit-boltws-windows-student$i" | grep public_ip_address | echo "      - $(awk '{split($0,a,"'\''"); print a[2]}')" >> ~/inventory.yaml
+  ip=$(puppet resource ec2_instance "$3-awskit-boltws-windows-student$i" | grep public_ip_address | echo " - $(awk '{split($0,a,"'\''"); print a[2]}')")
+  echo "student$i-Windows$ip"
+  echo "     $ip" >> ~/inventory.yaml
 done
 
 echo "    config:
