@@ -1,6 +1,6 @@
 cd ~
 
-If (! (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Puppet Bolt" ) {
+If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Puppet Bolt") ) {
     iwr -Uri "http://downloads.puppet.com/windows/puppet-bolt-x64-latest.msi" -OutFile ~/puppet-bolt-x64-latest.msi
 
     $Arguments = @(
@@ -12,7 +12,7 @@ If (! (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstal
     Start-Process "msiexec.exe" -Wait -ArgumentList $Arguments
 }
 
-If (! (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Microsoft Visual Studio Code" ) {
+If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Microsoft Visual Studio Code") ) {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     iwr -Uri "https://go.microsoft.com/fwlink/?Linkid=852157" -OutFile ~/VSCodeSetup-x64-latest.exe
 
@@ -25,7 +25,7 @@ If (! (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstal
     Start-Process "$((Get-Location).Path)\VSCodeSetup-x64-latest.exe" -Wait -ArgumentList $Arguments
 }
 
-If (! (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Google Chrome" ) {
+If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Google Chrome") ) {
     $LocalTempDir=$env:TEMP
     $ChromeInstaller="ChromeInstaller.exe"
     (new-object System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/latest/chrome_installer.exe',"$LocalTempDir\$ChromeInstaller")
