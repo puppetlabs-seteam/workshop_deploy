@@ -1,11 +1,32 @@
 cd ~
 
 If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Puppet Bolt") ) {
-    iwr -Uri "http://downloads.puppet.com/windows/puppet-bolt-x64-latest.msi" -OutFile ~/puppet-bolt-x64-latest.msi
+    $appname         = "Puppet Bolt" 
+    $downloaduri     = "http://downloads.puppet.com/windows/puppet-bolt-x64-latest.msi"
+    $downloadsuccess = $false
+    $downloadfile    = "$Env:Temp\puppet-bolt-x64-latest.msi"
+    $retryCount      = 5
+    while ((-not $downloadsuccess) -and ($retryCount -ge 0)){
+        try{
+            (new-object System.Net.WebClient).DownloadFile($downloaduri, $downloadfile)
+        } catch {
+            Write-Error "Downloading $appname setup failed"
+            Write-Host "Next attempt in 5 seconds"
+            Start-Sleep -s 5
+
+            $retryCount --
+            if ($retryCount -eq 0) {
+                Write-Host "Unable to successfully download $appname!"
+                exit 1
+            }
+        } Finally {
+            $downloadsuccess=$true
+        }
+    }
 
     $Arguments = @(
             "/i"
-            "$((Get-Location).Path)\puppet-bolt-x64-latest.msi"
+            "$Env:Temp\puppet-bolt-x64-latest.msi"
             "/qn"
             "/norestart"
         )
@@ -14,7 +35,28 @@ If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninsta
 
 If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Microsoft Visual Studio Code") ) {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    iwr -Uri "https://go.microsoft.com/fwlink/?Linkid=852157" -OutFile ~/VSCodeSetup-x64-latest.exe
+    $appname         = "VS Code" 
+    $downloaduri     = "https://go.microsoft.com/fwlink/?Linkid=852157"
+    $downloadsuccess = $false
+    $downloadfile    = "$Env:Temp\VSCodeSetup-x64-latest.exe"
+    $retryCount      = 5
+    while ((-not $downloadsuccess) -and ($retryCount -ge 0)){
+        try{
+            (new-object System.Net.WebClient).DownloadFile($downloaduri, $downloadfile)
+        } catch {
+            Write-Error "Downloading $appname setup failed"
+            Write-Host "Next attempt in 5 seconds"
+            Start-Sleep -s 5
+
+            $retryCount --
+            if ($retryCount -eq 0) {
+                Write-Host "Unable to successfully download $appname!"
+                exit 1
+            }
+        } Finally {
+            $downloadsuccess=$true
+        }
+    }
 
     $Arguments = @(
             "/VERYSILENT"
@@ -22,14 +64,34 @@ If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninsta
             "/NORESTART"
             "/MERGETASKS=!runcode"
         )
-    Start-Process "$((Get-Location).Path)\VSCodeSetup-x64-latest.exe" -Wait -ArgumentList $Arguments
+    Start-Process "$Env:Temp\VSCodeSetup-x64-latest.exe" -Wait -ArgumentList $Arguments
 }
 
-If (! ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Google Chrome") ) {
-    $LocalTempDir=$env:TEMP
-    $ChromeInstaller="ChromeInstaller.exe"
-    (new-object System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/latest/chrome_installer.exe',"$LocalTempDir\$ChromeInstaller")
-    Start-Process "$LocalTempDir\$ChromeInstaller" -Wait -ArgumentList @("/silent", "/install")
+If (! ((Get-ItemProperty HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*).displayname -contains "Google Chrome") ) {
+    $appname         = "Google Chrome" 
+    $downloaduri     = "http://dl.google.com/chrome/install/latest/chrome_installer.exe"
+    $downloadsuccess = $false
+    $downloadfile    = "$Env:Temp\ChromeInstaller.exe"
+    $retryCount      = 5
+    while ((-not $downloadsuccess) -and ($retryCount -ge 0)){
+        try{
+            (new-object System.Net.WebClient).DownloadFile($downloaduri, $downloadfile)
+        } catch {
+            Write-Error "Downloading $appname setup failed"
+            Write-Host "Next attempt in 5 seconds"
+            Start-Sleep -s 5
+
+            $retryCount --
+            if ($retryCount -eq 0) {
+                Write-Host "Unable to successfully download $appname!"
+                exit 1
+            }
+        } Finally {
+            $downloadsuccess=$true
+        }
+    }
+
+    Start-Process "$Env:Temp\ChromeInstaller.exe" -Wait -ArgumentList @("/silent", "/install")
 }
 
 $RegPath = "HKLM:SOFTWARE\Policies\Microsoft\Windows Defender"
