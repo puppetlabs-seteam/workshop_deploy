@@ -55,12 +55,12 @@ You need the `--user centos --run-as root` options for Bolt since CentOS instanc
 Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple regions. A Bolt params file is in JSON format and looks like this for the *workshop_deploy* Plan:
 ```
 {
-"bastion": true
+"bastion": true,
 "awsregion": "eu-west-3",
 "awsuser": "kevin",
 "github_user": "kreeuwijk",
 "github_pwd": "password",
-"nodes": "35.180.221.85",
+"nodes": "35.180.221.85"
 }
 ```
 To call the Bolt Plan with the params file (say the filename is `eu-west3-params.json`), do this:
