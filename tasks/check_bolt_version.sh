@@ -1,4 +1,4 @@
-version=$(bolt --version)
+version=$(/opt/puppetlabs/bin/bolt --version)
 major=`echo $version | cut -d. -f1`
 minor=`echo $version | cut -d. -f2`
 revision=`echo $version | cut -d. -f3`
