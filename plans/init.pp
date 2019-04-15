@@ -10,7 +10,7 @@ plan workshop_deploy(
 ) {
   # Check for Bolt version, as behavior has changed with 1.16, now requiring the user to NOT specify '--run-as root' when calling the plan
   # This change makes the plan incompatible with 1.15 and earlier, so we need to fail the plan if that is the case.
-  $r = run_task('workshop_deploy/check_bolt_version.sh', 'localhost', 'Checking version of Bolt...', '_catch_errors' => true)
+  $r = run_task(workshop_deploy::check_bolt_version, 'localhost', 'Checking version of Bolt...', '_catch_errors' => true)
   unless $r.ok {
     fail('You need to be running at least Bolt 1.16.0 to run this plan!')
   }
