@@ -35,12 +35,12 @@ awskit::host_config:
 
 Then run the Bolt Plan like this:
 ```
-bolt plan run workshop_deploy bastion=[true|false] awsregion=[region] awsuser=[AWS user] github_user=[github user] github_pwd=[github password] --nodes [AWS public IP for PE master] --user centos --private-key [private key for SSH] --run-as root --no-host-key-check
+bolt plan run workshop_deploy bastion=[true|false] awsregion=[region] awsuser=[AWS user] github_user=[github user] github_pwd=[github password] --nodes [AWS public IP for PE master] --user centos --private-key [private key for SSH] --no-host-key-check
 ```
 
 for example:
 ```
-bolt plan run workshop_deploy bastion=true awsregion="eu-west-3" awsuser="user1" github_user="user1" github_pwd="password" --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
+bolt plan run workshop_deploy bastion=true awsregion="eu-west-3" awsuser="user1" github_user="user1" github_pwd="password" --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
 ```
 
 The parameters have the following meaning:
@@ -50,7 +50,8 @@ The parameters have the following meaning:
 * github_user:  Your GitHub user account that has access to github.com/puppetlabs-seteam
 * github_pwd:   Your GitHub user account password
 
-You need the `--user centos --run-as root` options for Bolt since CentOS instances in AWS must be accessed via the `centos` user and then elevated to `root`.
+You need the `--user centos` option for Bolt since CentOS instances in AWS must be accessed via the `centos` user.
+The plan is configured to elevate to `root` for the steps on the AWS instance, and therefor must *not* be called with the `--run-as` parameter.
 
 Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple regions. A Bolt params file is in JSON format and looks like this for the *workshop_deploy* Plan:
 ```
@@ -65,7 +66,7 @@ Optionally, you can move the parameters into a Bolt params file, which makes it 
 ```
 To call the Bolt Plan with the params file (say the filename is `eu-west3-params.json`), do this:
 ```
-bolt plan run workshop_deploy --params @eu-west3-params.json --user centos --private-key ./user1.key-eu-west-3.pem --run-as root --no-host-key-check
+bolt plan run workshop_deploy --params @eu-west3-params.json --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
 ```
 
 Remember that you can eliminate the need to specify the connection info everytime, by adding the node to your inventory.yaml for Bolt!
