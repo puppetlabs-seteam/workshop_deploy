@@ -11,18 +11,18 @@ plan workshop_deploy(
   # Check for Bolt version, as behavior has changed with 1.16, now requiring the user to NOT specify '--run-as root' when calling the plan
   # This change makes the plan incompatible with 1.15 and earlier, so we need to fail the plan if that is the case.
   $r = run_task(workshop_deploy::check_bolt_version, 'localhost', 'Checking version of Bolt...', '_catch_errors' => true)
-  unless $r.ok {
-    fail('You need to be running at least Bolt 1.16.0 to run this plan!')
+  case $r {
+    Error['puppetlabs.tasks/escalate-error'] : {
+      fail('You need to run this plan without the "--run-as root" option now!')
+    }
+    Error : { fail('You need to be running at least Bolt 1.16.0 to run this plan!') }
   }
 
   if $bastion == false {
     notice('Info: Not using the Bastion account for AWS.')
     notice("Info: Using AWS region: ${awsregion}")
     notice("Info: Using AWS user: ${awsuser}")
-    $r = run_task(workshop_deploy::awskit_ensure_prereqs, 'localhost', 'Ensuring AWSkit prereqs are met... ' )
-    if $r.error.kind == 'puppetlabs.tasks/escalate-error' {
-      fail('You need to run this plan without the "--run-as root" option now!')
-    }
+    run_task(workshop_deploy::awskit_ensure_prereqs, 'localhost', 'Ensuring AWSkit prereqs are met... ' )
     run_script('workshop_deploy/awskit_deploy_master.sh', 'localhost', 'Deploy workshop PE Master on AWS using AWSKit... ', 'arguments' => [ "bastion=${bastion}", "awsregion=${awsregion}", "awsuser=${awsuser}" ] )
   }
   elsif $bastion == true {
