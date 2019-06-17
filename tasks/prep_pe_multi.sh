@@ -7,8 +7,8 @@ else
 "pe_install::puppet_master_dnsaltnames": ["master"]
 "puppet_enterprise::puppet_master_host": "%{::trusted.certname}"
 "puppet_enterprise::profile::master::code_manager_auto_configure": true
-"puppet_enterprise::profile::master::r10k_remote": "https://${PT_demoname}-gitlab.classroom.puppet.com/control-repo.git"
-"puppet_enterprise::profile::master::r10k_private_key": "/etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa"
+"puppet_enterprise::profile::master::r10k_remote": "https://student0:puppetlabs@${PT_demoname}-gitlab.classroom.puppet.com/puppet/control-repo.git"
+"puppet_enterprise::profile::master::r10k_private_key": ""
 FILE
 
   sed -i -r -e '/^\s*Defaults\s+secure_path/ s[=(.*)[=\1:/opt/puppetlabs/bin[' /etc/sudoers
