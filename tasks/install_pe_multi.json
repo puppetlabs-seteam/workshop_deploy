@@ -1,0 +1,18 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Installs Puppet Enterprise",
+    "parameters": {
+        "admin_pwd": {
+            "description": "The password for the admin account in PE",
+            "type": "String[1]",
+            "sensitive": true
+            },
+        "demoname": {
+            "description": "The name of your Hydra demo environment",
+            "type": "String[1]",
+            "sensitive": true
+            }
+    }
+}
