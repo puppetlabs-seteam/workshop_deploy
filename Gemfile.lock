@@ -188,7 +188,7 @@ GEM
     unf_ext (0.0.7.5)
     unicode-display_width (1.4.0)
     url (0.3.2)
-    yard (0.9.16)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
