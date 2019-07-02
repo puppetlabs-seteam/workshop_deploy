@@ -1,13 +1,26 @@
 #!/bin/bash
 echo "Info: Checking if all prereqs for AWSKit have been met..."
 
-echo "Info: Checking if XCode Commandline Developer Tools are installed..."
-xcode-select -p
-if [ $? -eq 0 ]; then
-  echo "Info: XCode Commandline Developer Tools are installed, continuing..."
+# Check if we're running in a container
+if [ -f /.dockerenv ]; then
+  echo "Info: Running inside a container"
+  containerized=true
+  gempath=/opt/puppetlabs/bolt/bin/gem
 else
-  echo "Error: XCode Tools are NOT installed! Run 'xcode-select --install' first."
-  exit 1
+  echo "Info: Not running inside a container"
+  containerized=false
+  gempath=/opt/puppetlabs/puppet/bin/gem
+fi
+
+if [ "$containerized" = "false" ]; then
+  echo "Info: Checking if XCode Commandline Developer Tools are installed..."
+  xcode-select -p
+  if [ $? -eq 0 ]; then
+    echo "Info: XCode Commandline Developer Tools are installed, continuing..."
+  else
+    echo "Error: XCode Tools are NOT installed! Run 'xcode-select --install' first."
+    exit 1
+  fi
 fi
 
 echo "Info: Checking if AWSCLI is installed..."
@@ -28,7 +41,7 @@ else
 fi
 
 echo "Info: Checking if the AWS-SDK gem is installed..."
-/opt/puppetlabs/puppet/bin/gem list | grep aws-sdk
+$gempath list | grep aws-sdk
 if [ $? -eq 0 ]; then
   echo "Info: AWS-SDK gem is installed, continuing..."
 else
@@ -37,7 +50,7 @@ else
 fi
 
 echo "Info: Checking if the Retries gem is installed..."
-/opt/puppetlabs/puppet/bin/gem list | grep retries
+$gempath list | grep retries
 if [ $? -eq 0 ]; then
   echo "Info: Retries gem is installed, continuing..."
 else
@@ -69,6 +82,7 @@ if [ $? -eq 0 ]; then
   echo "Info: timidri-awskit module is installed, making sure it is up-to-date..."
 else
   echo "Info: timidri-awskit module is not installed, installing module now..."
+  mkdir -p ~/.puppetlabs/etc/code/modules
   cd ~/.puppetlabs/etc/code/modules
   git clone https://github.com/puppetlabs-seteam/awskit.git
   echo "Info: timidri-awskit module is now installed, continuing..."
