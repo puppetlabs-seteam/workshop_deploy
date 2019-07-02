@@ -5,11 +5,9 @@ echo "Info: Checking if all prereqs for AWSKit have been met..."
 if [ -f /.dockerenv ]; then
   echo "Info: Running inside a container"
   containerized=true
-  gempath=/opt/puppetlabs/bolt/bin/gem
 else
   echo "Info: Not running inside a container"
   containerized=false
-  gempath=/opt/puppetlabs/puppet/bin/gem
 fi
 
 if [ "$containerized" = "false" ]; then
@@ -41,7 +39,7 @@ else
 fi
 
 echo "Info: Checking if the AWS-SDK gem is installed..."
-$gempath list | grep aws-sdk
+/opt/puppetlabs/puppet/bin/gem list | grep aws-sdk
 if [ $? -eq 0 ]; then
   echo "Info: AWS-SDK gem is installed, continuing..."
 else
@@ -50,7 +48,7 @@ else
 fi
 
 echo "Info: Checking if the Retries gem is installed..."
-$gempath list | grep retries
+/opt/puppetlabs/puppet/bin/gem list | grep retries
 if [ $? -eq 0 ]; then
   echo "Info: Retries gem is installed, continuing..."
 else
@@ -82,8 +80,13 @@ if [ $? -eq 0 ]; then
   echo "Info: timidri-awskit module is installed, making sure it is up-to-date..."
 else
   echo "Info: timidri-awskit module is not installed, installing module now..."
-  mkdir -p ~/.puppetlabs/etc/code/modules
-  cd ~/.puppetlabs/etc/code/modules
+  if [ "$containerized" = "true" ]; then
+    mkdir -p /etc/puppetlabs/code/modules
+    cd /etc/puppetlabs/code/modules
+  else
+    mkdir -p ~/.puppetlabs/etc/code/modules
+    cd ~/.puppetlabs/etc/code/modules
+  fi
   git clone https://github.com/puppetlabs-seteam/awskit.git
   echo "Info: timidri-awskit module is now installed, continuing..."
 fi
