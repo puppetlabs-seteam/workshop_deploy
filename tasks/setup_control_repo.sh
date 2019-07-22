@@ -42,7 +42,7 @@ fork_repo() {
     -d "${json}" | grep "HTTP/1.1 202 Accepted"
   then
     echo "Fork of workshop-control-repo successfully created in ${org}"
-    echo "Sleeping for 10 seconds....
+    echo "Sleeping for 10 seconds...."
     sleep 10
     get_forked_name
   else
