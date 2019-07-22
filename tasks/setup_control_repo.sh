@@ -16,6 +16,8 @@ check_fork_repo() {
         | grep "HTTP/1.1 204 No Content"
       then
         echo "Successfully deleted ${PT_username}/workshop-control-repo"
+        echo "Sleeping for 10 seconds..."
+        sleep 10
       else
         echo "Error trying to delete ${PT_username}/workshop-control-repo! Exiting..."
         exit 1
