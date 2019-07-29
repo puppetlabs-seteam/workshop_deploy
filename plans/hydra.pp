@@ -6,6 +6,7 @@ plan workshop_deploy::hydra(
 
   notice('Generating Control Repo student prep scripts...')
   
+  apply_prep('localhost')
   apply('localhost'){
     file { '~/prep.ps1':
       ensure  => file,
