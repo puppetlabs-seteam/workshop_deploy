@@ -159,9 +159,9 @@ create_file() {
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 201 Created"
   then
-    echo "Successfully created deploy key in control repo"
+    echo "Successfully created file ${1} in control repo"
   else
-    echo "Failed to create deploy key in control repo!"
+    echo "Failed to create file ${1} in control repo!"
     exit 1
   fi
 }
