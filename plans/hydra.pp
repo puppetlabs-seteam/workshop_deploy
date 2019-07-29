@@ -8,11 +8,11 @@ plan workshop_deploy::hydra(
   
   apply_prep('localhost')
   apply('localhost'){
-    file { "/Users/${facts['identity']['user']}/prep.ps1':
+    file { "/Users/${facts['identity']['user']}/prep.ps1":
       ensure  => file,
       content => epp('workshop_deploy/prep_ps1.epp', { 'github_user' => $github_user })
     }
-    file { '/Users/${facts['identity']['user']}/prep.sh':
+    file { "/Users/${facts['identity']['user']}/prep.sh":
       ensure  => file,
       content => epp('workshop_deploy/prep_sh.epp', { 'github_user' => $github_user })
     }
