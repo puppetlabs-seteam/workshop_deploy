@@ -18,5 +18,5 @@ plan workshop_deploy::hydra(
     }
   }
 
-  run_task(workshop_deploy::setup_control_repo, 'localhost', 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
+  run_task(workshop_deploy::setup_control_repo_hydra, 'localhost', 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd)
 }
