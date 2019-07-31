@@ -1,0 +1,13 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Update the control-repo for Code Manager",
+    "parameters": {
+        "username": {
+            "description": "The username for connecting to Github",
+            "type": "String[1]",
+            "sensitive": true
+        }
+    }
+}

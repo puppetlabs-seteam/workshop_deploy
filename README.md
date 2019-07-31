@@ -1,7 +1,7 @@
 
 # Bolt Workshop automated deployment of PE with Bolt
 
-To deploy PE in AWS with this module, do the following:
+To create a Bolt Workshop environment with this module, do the following:
 
 Add the following to your Puppetfile for Bolt:
 
@@ -16,6 +16,46 @@ mod 'workshop_deploy',
 ```
 
 and run `bolt puppetfile install` to sync the modules.
+
+## If you are using Hydra to stand up a Puppet Enterprise environment, do the following:
+
+Make sure you have deployed a Hydra environment with `cd4pe: false`, `agents: false` and `student_machine_count` set to the amount of students you have for the workshop. Add 1 more to have your own student machine to do demos with.
+
+Retrieve the Bolt Inventory file for your Hydra environment from the #team-svcsport-chatter channel in Slack, and open it in an editor.
+- Scroll down to the `alllinux` section and locate the name of your PE master (should be `<branchname>-master0.classroom.puppet.com`)
+- Copy the name of the PE master you found
+- Scroll up to the `master` section and replace the internal IP address (a 10.x.x.x IP) with the PE master name that you copied
+- Save the file
+
+Now make sure you have placed the [training.pem](https://github.com/puppetlabs/ilt-getting-started-with-puppet/blob/master/presentation/showoff/_support/training.pem) file in ~/.ssh/training.pem before you run the Bolt plan.
+
+Run the `workshop_deploy::hydra` plan as follows:
+
+```
+bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] master=[PE Master name from Bolt Inventory] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
+```
+
+for example:
+```
+bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' master=user1-1master0.classroom.puppet.com --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+```
+
+Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple Hydra environments. A Bolt params file is in JSON format and looks like this for the `workshop_deploy::hydra` Plan:
+```
+{
+"github_user": "user1",
+"github_pwd": 'password',
+"master": "user1-1master0.classroom.puppet.com"
+}
+```
+To call the Bolt Plan with the params file (say the filename is `user1-1-params.json`), do this:
+```
+bolt plan run workshop_deploy::hydra --params @user1-1-params.json --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+```
+
+
+## If you want to use AWSKit to stand up a Puppet Enterprise environment, do the following:
+
 
 Make sure you have previously configured AWSKit to deploy a CentOS image for the Bolt workshop that uses a fixed Elastic IP. You'll need the following data in Hiera for your desired AWS region:
 ```
@@ -40,7 +80,7 @@ bolt plan run workshop_deploy bastion=[true|false] awsregion=[region] awsuser=[A
 
 for example:
 ```
-bolt plan run workshop_deploy bastion=true awsregion="eu-west-3" awsuser="user1" github_user="user1" github_pwd="password" --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
+bolt plan run workshop_deploy bastion=true awsregion=eu-west-3 awsuser=user1 github_user=user1 github_pwd='password' --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
 ```
 
 The parameters have the following meaning:
@@ -53,14 +93,14 @@ The parameters have the following meaning:
 You need the `--user centos` option for Bolt since CentOS instances in AWS must be accessed via the `centos` user.
 The plan is configured to elevate to `root` for the steps on the AWS instance, and therefor must *not* be called with the `--run-as` parameter.
 
-Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple regions. A Bolt params file is in JSON format and looks like this for the *workshop_deploy* Plan:
+Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple regions. A Bolt params file is in JSON format and looks like this for the `workshop_deploy` Plan:
 ```
 {
 "bastion": true,
 "awsregion": "eu-west-3",
 "awsuser": "kevin",
 "github_user": "kreeuwijk",
-"github_pwd": "password",
+"github_pwd": 'password',
 "nodes": "35.180.221.85"
 }
 ```
@@ -71,7 +111,7 @@ bolt plan run workshop_deploy --params @eu-west3-params.json --user centos --pri
 
 Remember that you can eliminate the need to specify the connection info everytime, by adding the node to your inventory.yaml for Bolt!
 
-## Deploying Bolt targets
+## Deploying Bolt targets when using AWSKit
 To deploy targets, use the `workshop_deploy::targets` plan. This plan will:
 * Deploy 1 Linux and 1 Windows target for the Bolt instructor
 * Deploy 1 Linux and 1 Windows target for the amount of students specified
