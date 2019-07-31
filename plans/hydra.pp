@@ -8,6 +8,12 @@ plan workshop_deploy::hydra(
   run_task(workshop_deploy::check_github_creds, 'localhost', 'Checking Github credentials...', 'username' => $github_user, 'password' => $github_pwd)
   wait_until_available($master, description => 'Verifying PE Master on AWS is available...', wait_time => 30, retry_interval => 5)
 
+  #Make sure CD4PE is not deployed
+  $r = run_command('netstat -an | grep 8888', $master, 'Make sure CD4PE is not installed...', '_run_as' => 'root', '_catch_errors' => true)
+  if $r.ok {
+    fail('You must deploy this Hydra environment **without** CD4PE for the Bolt Workshop!')
+  }
+
   notice('Generating Control Repo student prep scripts...')
   apply_prep($master)
   apply($master, '_run_as' => 'root'){
