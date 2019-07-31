@@ -1,8 +1,10 @@
 plan workshop_deploy::hydra(
-  TargetSpec $master,
+  #TargetSpec $master,
+  String $demo_name,
   String $github_user,
   String $github_pwd,
 ) {
+  $master = get_targets("${demo_name}master0.classroom.puppet.com")
   run_task(workshop_deploy::check_github_creds, 'localhost', 'Checking Github credentials...', 'username' => $github_user, 'password' => $github_pwd)
   wait_until_available($master, description => 'Verifying PE Master on AWS is available...', wait_time => 30, retry_interval => 5)
 

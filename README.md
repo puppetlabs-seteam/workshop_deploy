@@ -32,12 +32,12 @@ Now make sure you have placed the [training.pem](https://github.com/puppetlabs/i
 Run the `workshop_deploy::hydra` plan as follows:
 
 ```
-bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] master=[PE Master name from Bolt Inventory] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
+bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
 ```
 
 for example:
 ```
-bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' master=user1-1master0.classroom.puppet.com --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
 ```
 
 Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple Hydra environments. A Bolt params file is in JSON format and looks like this for the `workshop_deploy::hydra` Plan:
@@ -45,7 +45,7 @@ Optionally, you can move the parameters into a Bolt params file, which makes it 
 {
 "github_user": "user1",
 "github_pwd": 'password',
-"master": "user1-1master0.classroom.puppet.com"
+"demo_name": "user1-1"
 }
 ```
 To call the Bolt Plan with the params file (say the filename is `user1-1-params.json`), do this:
