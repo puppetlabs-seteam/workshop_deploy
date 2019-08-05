@@ -3,19 +3,28 @@
 #/////////////////////////////////////////////////////////////////////////////////////////////
 check_fork_repo() {
   
-  if $cmd -i -s -X GET \
-    https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
-    | grep "HTTP/1.1 200 OK"
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
+
+  ret=$($cmd -i -s --write-out %{http_code} \
+             -X GET https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks | grep -c "HTTP/1.1 200 OK")
+             #| grep "HTTP/1.1 200 OK"
+  if [ "$ret" -gt "0" ]
   then
+
     if $cmd -i -X GET \
       https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
       | grep '"full_name": "'$PT_username'/workshop-control-repo'
     then
       get_forked_name
       echo "Target repo ${PT_username}/${repo_name} already exists, deleting it first..." 
-      if $cmd -i -s -X DELETE \
-        "https://api.github.com/repos/${PT_username}/${repo_name}" \
-        | grep "HTTP/1.1 204 No Content"
+      
+      ret=$($cmd -i -s -XDELETE \
+        "https://api.github.com/repos/${PT_username}/${repo_name}" | grep -c "HTTP/1.1 204 No Content")
+      if [ "$ret" -gt "0" ]
       then
         echo "Successfully deleted ${PT_username}/${repo_name}"
         echo "Sleeping for 10 seconds..."
@@ -26,43 +35,58 @@ check_fork_repo() {
       fi
     fi
   else
-    echo "Failed to retrieve forks for puppetlabs-seteam/workshop-control-repo!"
+    echo "Failed to retrieve forks for puppetlabs-seteam/workshop-control-repo! ($ret)"
     exit 1
   fi
 }
 
 fork_repo() {
   org=$1
-  json='{
-      "organisation": "'$org'"
-  }'
+  json='{ "organisation": "'${org}'" }'
 
-  if $cmd -i -s -X POST \
-    https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
-    -H 'Content-Type: application/json' \
-    -d "${json}" | grep "HTTP/1.1 202 Accepted"
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
+
+  ret=$($cmd -i -s -X POST -H "Content-Type: application/json" -d "${json}" \
+         https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks | grep -c "HTTP/1.1 202 Accepted")
+  if [ "$ret" -gt "0" ]
   then
     echo "Fork of workshop-control-repo successfully created in ${org}"
     echo "Sleeping for 10 seconds...."
     sleep 10
     get_forked_name
   else
-    echo "Failed to create fork of workshop-control-repo in ${org}!"
+    echo "Failed to create fork of workshop-control-repo in ${org} - ${ret}!"
     exit 1
   fi
 }
 
 get_forked_name() {
   
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
+
   repo_name=$($cmd -i -X GET \
-  https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
-  | awk '/full_name": "'${PT_username}'/ {print $2}' | awk -F '/' '{print $2}' | awk -F '"' '{print $1}')
+    https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
+    | awk '/full_name": "'${PT_username}'/ {print $2}' | awk -F '/' '{print $2}' | awk -F '"' '{print $1}')
 }
 
 create_branch() {
   branch=$1
   sha=$2
   echo "Checking if branch ${branch} already exists..."
+
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
   
   if $cmd -i -s -X GET \
     "https://api.github.com/repos/${PT_username}/${repo_name}/git/refs/heads/${branch}" \
@@ -101,6 +125,12 @@ protect_branch() {
     "restrictions": null
   }'
 
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
+
   if $cmd -i -s -X PUT \
     "https://api.github.com/repos/${PT_username}/${repo_name}/branches/${branch}/protection" \
     -H 'Content-Type: application/json' \
@@ -119,6 +149,12 @@ change_default_branch() {
     "name": "'$repo_name'",
     "default_branch": "'$branch'"
   }'
+
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
 
   if $cmd -i -s -X PATCH \
     "https://api.github.com/repos/${PT_username}/${repo_name}" \
@@ -139,6 +175,12 @@ add_deploy_key() {
     "read_only": false
   }'
 
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
+
   if $cmd -i -s -X POST \
     "https://api.github.com/repos/${PT_username}/${repo_name}/keys" \
     -H 'Content-Type: application/json' \
@@ -157,6 +199,12 @@ create_file() {
     "content": "'$2'"
   }'
 
+  if [ "${PT_token}" != "" ] ; then
+    cmd="curl -H \"Authorization: token ${PT_token}\""
+  else
+    cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  fi
+
   if $cmd -i -s -X PUT \
     "https://api.github.com/repos/${PT_username}/${repo_name}/contents/$1" \
     -H 'Content-Type: application/json' \
@@ -173,6 +221,12 @@ create_file() {
 # End of functions for use in script
 
 # Main script execution
+if [ "${PT_token}" != "" ] ; then
+  cmd="curl -H \"Authorization: token ${PT_token}\""
+else
+  cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+fi
+
 check_fork_repo
 fork_repo $PT_username
 

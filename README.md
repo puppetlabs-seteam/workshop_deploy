@@ -32,12 +32,21 @@ Now make sure you have placed the [training.pem](https://github.com/puppetlabs/i
 Run the `workshop_deploy::hydra` plan as follows:
 
 ```
-bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
+bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] github_token=[github token] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
 ```
 
+If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with scope "repo" and "delete_repo" only.
+
+To use your password pass an empty github_token parameter to the plan. If you use a token pass an empty password to the plan.
+
 for example:
+with password:
 ```
-bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' github_token='' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+```
+with token:
+```
+bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='' github_token='your token' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
 ```
 
 Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple Hydra environments. A Bolt params file is in JSON format and looks like this for the `workshop_deploy::hydra` Plan:
@@ -45,6 +54,7 @@ Optionally, you can move the parameters into a Bolt params file, which makes it 
 {
 "github_user": "user1",
 "github_pwd": 'password',
+"github_token": "",
 "demo_name": "user1-1"
 }
 ```

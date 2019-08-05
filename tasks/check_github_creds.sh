@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "${PT_token}" != "" ] ; then
-  cmd="curl -H \"Authorization: ${PT_token}\""
+  cmd="curl -H \"Authorization: token ${PT_token}\""
 else
   cmd="curl --user \"${PT_username}\":\"${PT_password}\""
 fi
