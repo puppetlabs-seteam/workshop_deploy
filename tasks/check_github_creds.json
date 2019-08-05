@@ -11,8 +11,13 @@
             },
         "password": {
             "description": "The password for connecting to Github",
-            "type": "String[1]",
+            "type": "String[0]",
             "sensitive": true
-            }
+            },
+        "token": {
+            "description":"The GitHub access token in case of two factor authentication enabled",
+            "type": "String[0]",
+            "sensitive": true
+        }
     }
 }

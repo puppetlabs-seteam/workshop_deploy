@@ -13,11 +13,18 @@ json='{
     }
 }'
 
-repo_name=$(curl --user "${PT_username}":"${PT_password}" -i -X GET \
+if[ "${PT_token}" != "" ] 
+then
+  cmd="curl -H \"Authorization: ${PT_token}\""
+else
+  cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+fi
+
+repo_name=$($cmd -i -X GET \
   https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
   | awk '/full_name": "'${PT_username}'/ {print $2}' | awk -F '/' '{print $2}' | awk -F '"' '{print $1}')
 
-if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
+if curl $cmd -i -s -X POST \
   "https://api.github.com/repos/${PT_username}/${repo_name}/hooks" \
   -H 'Content-Type: application/json' \
   -d "${json}" | grep "HTTP/1.1 201 Created"

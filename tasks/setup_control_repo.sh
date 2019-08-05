@@ -2,17 +2,18 @@
 # Functions for use in script
 #/////////////////////////////////////////////////////////////////////////////////////////////
 check_fork_repo() {
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X GET \
+  
+  if $cmd -i -s -X GET \
     https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
     | grep "HTTP/1.1 200 OK"
   then
-    if curl --user "${PT_username}":"${PT_password}" -i -X GET \
+    if $cmd -i -X GET \
       https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
       | grep '"full_name": "'$PT_username'/workshop-control-repo'
     then
       get_forked_name
       echo "Target repo ${PT_username}/${repo_name} already exists, deleting it first..." 
-      if curl --user "${PT_username}":"${PT_password}" -i -s -X DELETE \
+      if $cmd -i -s -X DELETE \
         "https://api.github.com/repos/${PT_username}/${repo_name}" \
         | grep "HTTP/1.1 204 No Content"
       then
@@ -36,7 +37,7 @@ fork_repo() {
       "organisation": "'$org'"
   }'
 
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
+  if $cmd -i -s -X POST \
     https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 202 Accepted"
@@ -52,7 +53,8 @@ fork_repo() {
 }
 
 get_forked_name() {
-  repo_name=$(curl --user "${PT_username}":"${PT_password}" -i -X GET \
+  
+  repo_name=$($cmd -i -X GET \
   https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
   | awk '/full_name": "'${PT_username}'/ {print $2}' | awk -F '/' '{print $2}' | awk -F '"' '{print $1}')
 }
@@ -61,12 +63,13 @@ create_branch() {
   branch=$1
   sha=$2
   echo "Checking if branch ${branch} already exists..."
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X GET \
+  
+  if $cmd -i -s -X GET \
     "https://api.github.com/repos/${PT_username}/${repo_name}/git/refs/heads/${branch}" \
     | grep "HTTP/1.1 200 OK"
   then
     echo "Branch ${branch} already exists, deleting it first..."
-    if curl --user "${PT_username}":"${PT_password}" -i -s -X DELETE \
+    if $cmd -i -s -X DELETE \
       "https://api.github.com/repos/${PT_username}/${repo_name}/git/refs/heads/${branch}" \
       | grep "HTTP/1.1 204 No Content"
     then
@@ -77,7 +80,7 @@ create_branch() {
     fi
   fi
   json='{"ref": "refs/heads/'$branch'","sha": "'$sha'"}'
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
+  if $cmd -i -s -X POST \
     "https://api.github.com/repos/${PT_username}/${repo_name}/git/refs" \
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 201 Created"
@@ -98,7 +101,7 @@ protect_branch() {
     "restrictions": null
   }'
 
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X PUT \
+  if $cmd -i -s -X PUT \
     "https://api.github.com/repos/${PT_username}/${repo_name}/branches/${branch}/protection" \
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 200 OK"
@@ -117,7 +120,7 @@ change_default_branch() {
     "default_branch": "'$branch'"
   }'
 
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X PATCH \
+  if $cmd -i -s -X PATCH \
     "https://api.github.com/repos/${PT_username}/${repo_name}" \
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 200 OK"
@@ -136,7 +139,7 @@ add_deploy_key() {
     "read_only": false
   }'
 
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X POST \
+  if $cmd -i -s -X POST \
     "https://api.github.com/repos/${PT_username}/${repo_name}/keys" \
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 201 Created"
@@ -154,7 +157,7 @@ create_file() {
     "content": "'$2'"
   }'
 
-  if curl --user "${PT_username}":"${PT_password}" -i -s -X PUT \
+  if $cmd -i -s -X PUT \
     "https://api.github.com/repos/${PT_username}/${repo_name}/contents/$1" \
     -H 'Content-Type: application/json' \
     -d "${json}" | grep "HTTP/1.1 201 Created"
@@ -173,7 +176,7 @@ create_file() {
 check_fork_repo
 fork_repo $PT_username
 
-sha_id=$(curl --user "${PT_username}":"${PT_password}" -X GET \
+sha_id=$($cmd -X GET \
   "https://api.github.com/repos/${PT_username}/${repo_name}/git/refs/heads/workshop_init" \
   | grep '"sha"' | awk '{split($0,a, "\""); print a[4]}')
 
