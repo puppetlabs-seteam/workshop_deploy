@@ -19,20 +19,17 @@ plan workshop_deploy::hydra(
   }
 
   notice('Generating Control Repo student prep scripts...')
-  catch_errors() || {
-    apply_prep($master)
-  }
+  apply_prep($master)
+
   notice('Create prep')
-  catch_errors() || {
-    apply($master, '_run_as' => 'root'){
-      file { '/root/prep.ps1':
-        ensure  => file,
-        content => epp('workshop_deploy/prep_ps1.epp', { 'github_user' => $github_user })
-      }
-      file { '/root/prep.sh':
-        ensure  => file,
-        content => epp('workshop_deploy/prep_sh.epp', { 'github_user' => $github_user })
-      }
+  apply($master, '_run_as' => 'root'){
+    file { '/root/prep.ps1':
+      ensure  => file,
+      content => epp('workshop_deploy/prep_ps1.epp', { 'github_user' => $github_user })
+    }
+    file { '/root/prep.sh':
+      ensure  => file,
+      content => epp('workshop_deploy/prep_sh.epp', { 'github_user' => $github_user })
     }
   }
 
