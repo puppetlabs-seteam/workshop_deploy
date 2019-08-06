@@ -35,15 +35,15 @@ Run the `workshop_deploy::hydra` plan as follows:
 bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] github_token=[github token] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
 ```
 
-If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with scope "repo", "delete_repo", "admin::public_key", "admin:org" and "admin:gpg_key" only. Grant full acess for the token to the mentioned scopes.
+If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with scope "repo", "delete_repo", "admin::public_key", "admin:org" and "admin:gpg_key" only. Grant full access for the token to the mentioned scopes.
 
 To use your password pass an empty github_token parameter to the plan. If you use a token pass an empty password to the plan.
 
-for example with password:
+Example with password:
 ```
 bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' github_token='' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
 ```
-for example with token:
+Example with GitHub token:
 ```
 bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='' github_token='your token' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
 ```
