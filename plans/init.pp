@@ -2,8 +2,9 @@ plan workshop_deploy(
   TargetSpec $nodes,
   String $awsregion,
   String $awsuser,
-  String $github_user,
-  String $github_pwd,
+  Optional[String[1]] $github_user = undef,
+  Optional[String[1]] $github_pwd = undef,
+  Optional[String[1]] $github_token = undef,
   String $pe_name = 'master.inf.puppet.vm',
   String $pe_admin_pwd = 'BoltR0cks!',
   Boolean $bastion = false,
@@ -18,6 +19,18 @@ plan workshop_deploy(
       }
       default: { fail('You need to be running at least Bolt 1.16.0 to run this plan!') }
     }
+  }
+
+  if ($github_token) {
+    $result = run_task(workshop_deploy::check_github_usertoken, 'localhost', 'Looking up Github username from token...', 'token' => $github_token)
+    $github_usr = $result.first.value['_output'].chomp
+    warning("Found Github username: ${github_usr}")
+    $gh_params = { 'username' => $github_usr, 'token' => $github_token, '_run_as' => 'root' }
+  } elsif ($github_user and $github_pwd) {
+    $github_usr = $github_user
+    $gh_params = { 'username' => $github_usr, 'password' => $github_pwd, '_run_as' => 'root' }
+  } else {
+    fail_plan('You must specify either a Github username and password, or a personal GitHub access token!')
   }
 
   if $bastion == false {
@@ -40,9 +53,9 @@ plan workshop_deploy(
 
   wait_until_available($nodes, description => 'Waiting up to 5 minutes until AWS instance becomes available...', wait_time => 300, retry_interval => 15)
 
-  run_task(workshop_deploy::check_github_creds, $nodes, 'Checking Github credentials...', 'username' => $github_user, 'password' => $github_pwd, '_run_as' => 'root')
+  run_task(workshop_deploy::check_github_creds, $nodes, 'Checking Github credentials...', $gh_params)
   run_task(workshop_deploy::download_pe, $nodes, 'Download latest version of Puppet Enterprise...', '_run_as' => 'root')
-  run_task(workshop_deploy::prep_pe, $nodes, 'Run preparatory steps for Puppet Enterprise...', 'username' => $github_user, 'admin_pwd' => $pe_admin_pwd, '_run_as' => 'root')
+  run_task(workshop_deploy::prep_pe, $nodes, 'Run preparatory steps for Puppet Enterprise...', 'username' => $github_usr, 'admin_pwd' => $pe_admin_pwd, '_run_as' => 'root')
 
   apply_prep($nodes)
 
@@ -97,15 +110,15 @@ plan workshop_deploy(
   apply($nodes, '_run_as' => 'root'){
     file { '/root/prep.ps1':
       ensure  => file,
-      content => epp('workshop_deploy/prep_ps1.epp', { 'github_user' => $github_user })
+      content => epp('workshop_deploy/prep_ps1.epp', { 'github_user' => $github_usr })
     }
     file { '/root/prep.sh':
       ensure  => file,
-      content => epp('workshop_deploy/prep_sh.epp', { 'github_user' => $github_user })
+      content => epp('workshop_deploy/prep_sh.epp', { 'github_user' => $github_usr })
     }
   }
 
-  run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd, '_run_as' => 'root')
+  run_task(workshop_deploy::setup_control_repo, $nodes, 'Setting up Control Repo...', $gh_params)
 
   run_task(workshop_deploy::firewall_ports, $nodes, 'Open firewall ports if firewalld is installed...', '_run_as' => 'root')
 
@@ -124,7 +137,7 @@ plan workshop_deploy(
 
   upload_file('workshop_deploy/csr_attributes.yaml', '/etc/puppetlabs/puppet/csr_attributes.yaml', $nodes, 'Upload CSR attributes file...', '_run_as' => 'root')
 
-  run_task(workshop_deploy::install_pe, $nodes, 'Install latest version of Puppet Enterprise...', 'username' => $github_user, 'admin_pwd' => $pe_admin_pwd, '_run_as' => 'root')
+  run_task(workshop_deploy::install_pe, $nodes, 'Install latest version of Puppet Enterprise...', 'username' => $github_usr, 'admin_pwd' => $pe_admin_pwd, '_run_as' => 'root')
   run_task(workshop_deploy::configure_autosign, $nodes, 'Configure Autosigning...', '_run_as' => 'root')
 
   run_command('chown -R pe-puppet:pe-puppet /etc/puppetlabs/puppetserver/ssh', $nodes, 'Set file ownership...', '_run_as' => 'root')
@@ -155,7 +168,7 @@ plan workshop_deploy(
   run_task(workshop_deploy::create_nodegroup, $nodes, 'Creating Workshop node group...', 'master' => $pe_name, '_run_as' => 'root')
   run_command('/opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --no-splay --no-usecacheonfailure --verbose', $nodes, 'Run Puppet Agent to apply classification changes...', '_run_as' => 'root')
 
-  run_task(workshop_deploy::create_webhook_to_aws, $nodes, 'Creating Webhook...', 'username' => $github_user, 'password' => $github_pwd, '_run_as' => 'root')
+  run_task(workshop_deploy::create_webhook_to_aws, $nodes, 'Creating Webhook...', $gh_params)
 
   notice("Installation complete, you can login to PE with username 'admin' and password '${pe_admin_pwd}'")
 }
