@@ -35,7 +35,7 @@ Run the `workshop_deploy::hydra` plan as follows:
 bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] github_token=[github token] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
 ```
 
-If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with scope "repo" and "delete_repo" only.
+If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with scope "repo", "delete_repo", "admin::public_key", "admin:org" and "admin:gpg_key" only.
 
 To use your password pass an empty github_token parameter to the plan. If you use a token pass an empty password to the plan.
 
