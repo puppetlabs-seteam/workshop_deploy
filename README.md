@@ -32,20 +32,18 @@ Now make sure you have placed the [training.pem](https://github.com/puppetlabs/i
 Run the `workshop_deploy::hydra` plan as follows:
 
 ```
-bolt plan run workshop_deploy::hydra github_user=[github user] github_pwd=[github password] github_token=[github token] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
+bolt plan run workshop_deploy::hydra [github_user=[github user] github_pwd=[github password]] [github_token=[github token]] demo_name=[Your Hydra demo branch] --inventoryfile [Bolt inventoryfile you got from #team-svcsport-chatter]
 ```
 
-If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with scope "repo", "delete_repo", "admin::public_key", "admin:org" and "admin:gpg_key" only. Grant full access for the token to the mentioned scopes.
+If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with the following scopes: "repo", "admin:repo_hook" "read:user" and "delete_repo".
 
-To use your password pass an empty github_token parameter to the plan. If you use a token pass an empty password to the plan.
-
-Example with password:
+Example with Github username & password:
 ```
-bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' github_token='' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='password' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
 ```
 Example with GitHub token:
 ```
-bolt plan run workshop_deploy::hydra github_user=user1 github_pwd='' github_token='your token' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
+bolt plan run workshop_deploy::hydra github_token='abcdefghijklmn1234567' demo_name=user1-1 --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
 ```
 
 Optionally, you can move the parameters into a Bolt params file, which makes it easier to preconfigure support for multiple Hydra environments. A Bolt params file is in JSON format and looks like this for the `workshop_deploy::hydra` Plan:
@@ -53,10 +51,17 @@ Optionally, you can move the parameters into a Bolt params file, which makes it 
 {
 "github_user": "user1",
 "github_pwd": 'password',
-"github_token": "",
 "demo_name": "user1-1"
 }
 ```
+or
+```
+{
+"github_token": "abcdefghijklmn1234567",
+"demo_name": "user1-1"
+}
+```
+
 To call the Bolt Plan with the params file (say the filename is `user1-1-params.json`), do this:
 ```
 bolt plan run workshop_deploy::hydra --params @user1-1-params.json --inventoryfile ~/Downloads/user1-1-bolt-inventory.yaml
@@ -65,6 +70,7 @@ bolt plan run workshop_deploy::hydra --params @user1-1-params.json --inventoryfi
 
 ## If you want to use AWSKit to stand up a Puppet Enterprise environment, do the following:
 
+> It is *highly* recommended to use the `puppetseteam/puppet-aws-kit` container image for AWSKit, see the Readme on the [AWSKit repo](https://github.com/puppetlabs-seteam/awskit).
 
 Make sure you have previously configured AWSKit to deploy a CentOS image for the Bolt workshop that uses a fixed Elastic IP. You'll need the following data in Hiera for your desired AWS region:
 ```
@@ -84,12 +90,18 @@ awskit::host_config:
 
 Then run the Bolt Plan like this:
 ```
-bolt plan run workshop_deploy bastion=[true|false] awsregion=[region] awsuser=[AWS user] github_user=[github user] github_pwd=[github password] --nodes [AWS public IP for PE master] --user centos --private-key [private key for SSH] --no-host-key-check
+bolt plan run workshop_deploy bastion=[true|false] awsregion=[region] awsuser=[AWS user] [github_user=[github user] github_pwd=[github password]] [github_token=[github token]] --nodes [AWS public IP for PE master] --user centos --private-key [private key for SSH] --no-host-key-check
 ```
 
-for example:
+If your GitHub user has 2FA enabled you can not use your GitHub user together with the GitHub password. You need a GitHub token instead. The token needs to be created on the GitHub website. Move to Settings -> Developer settings -> Personal acess token and create a token with the following scopes: "repo", "admin:repo_hook" "read:user" and "delete_repo".
+
+Example with Github username & password:
 ```
 bolt plan run workshop_deploy bastion=true awsregion=eu-west-3 awsuser=user1 github_user=user1 github_pwd='password' --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
+```
+Example with Github token:
+```
+bolt plan run workshop_deploy bastion=true awsregion=eu-west-3 awsuser=user1 github_token='abcdefghijklmn1234567' --nodes 35.180.221.85 --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
 ```
 
 The parameters have the following meaning:
@@ -98,6 +110,7 @@ The parameters have the following meaning:
 * aws_user:     The AWS user (in Hiera) that awskit must use for deployment
 * github_user:  Your GitHub user account that has access to github.com/puppetlabs-seteam
 * github_pwd:   Your GitHub user account password
+* github_token: Your Github personal access token, which can be used instead of github_user and github_pwd
 
 You need the `--user centos` option for Bolt since CentOS instances in AWS must be accessed via the `centos` user.
 The plan is configured to elevate to `root` for the steps on the AWS instance, and therefor must *not* be called with the `--run-as` parameter.
@@ -113,6 +126,17 @@ Optionally, you can move the parameters into a Bolt params file, which makes it 
 "nodes": "35.180.221.85"
 }
 ```
+or
+```
+{
+"bastion": true,
+"awsregion": "eu-west-3",
+"awsuser": "kevin",
+"github_token": "abcdefghijklmn1234567",
+"nodes": "35.180.221.85"
+}
+```
+
 To call the Bolt Plan with the params file (say the filename is `eu-west3-params.json`), do this:
 ```
 bolt plan run workshop_deploy --params @eu-west3-params.json --user centos --private-key ./user1.key-eu-west-3.pem --no-host-key-check
