@@ -36,6 +36,7 @@ plan workshop_deploy::hydra(
     }
   }
 
+  run_task(workshop_deploy::replace_master_control_repo_keys, $master, 'Replacing control repo deploy key', '_run_as' => 'root')
   run_task(workshop_deploy::setup_control_repo, $master, 'Setting up Control Repo...', 'username' => $github_user, 'password' => $github_pwd, 'token' => $github_token, '_run_as' => 'root')
   run_task(workshop_deploy::update_codemanager, $master, 'Reconfiguring Code Manager...', 'username' => $github_user, '_run_as' => 'root')
   run_command('/opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --no-splay --no-usecacheonfailure --verbose', $master, 'Run Puppet Agent to apply Code Manager changes...', '_run_as' => 'root')

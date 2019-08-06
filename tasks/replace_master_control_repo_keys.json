@@ -1,0 +1,7 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Repleace code deploy ssh keys on master",
+    "parameters": {}
+}
