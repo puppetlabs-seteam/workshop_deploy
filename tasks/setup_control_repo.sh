@@ -84,9 +84,9 @@ fork_repo() {
 
   else
 
-    curl --user \"${PT_username}\":\"${PT_password}\" -i -s -H "Content-Type: application/json" \
+    curl --user "${PT_username}":"${PT_password}" -i -s -H "Content-Type: application/json" \
          -X POST https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks \
-         -d "${json}" -o /tmo/curl.$$
+         -d "${json}" -o /tmp/curl.$$
 
   fi
 

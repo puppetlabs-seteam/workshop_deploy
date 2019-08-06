@@ -6,17 +6,17 @@
     "parameters": {
         "username": {
             "description": "The username for connecting to Github",
-            "type": "String[1]",
+            "type": "Optional[String[1]]",
             "sensitive": true
             },
         "password": {
             "description": "The password for connecting to Github",
-            "type": "String[0]",
+            "type": "Optional[String[1]]",
             "sensitive": true
             },
         "token": {
-            "description":"The GitHub access token in case of two factor authentication enabled",
-            "type": "String[0]",
+            "description":"The GitHub Personal Access Token (replaces username & password, use when 2FA is enabled)",
+            "type": "Optional[String[1]]",
             "sensitive": true
         }
     }

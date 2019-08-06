@@ -1,11 +1,11 @@
 #!/bin/bash
 if [ "${PT_token}" != "" ] ; then
-  cmd="curl -H \"Authorization: token ${PT_token}\""
+  auth="-H 'Authorization: token ${PT_token}'"
 else
-  cmd="curl --user \"${PT_username}\":\"${PT_password}\""
+  auth="--user '${PT_username}':'${PT_password}'"
 fi
 
-if $cmd -i -s -X GET https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks | grep "HTTP/1.1 200 OK"
+if eval curl $auth -i -s -X GET https://api.github.com/repos/puppetlabs-seteam/workshop-control-repo/forks | grep "HTTP/1.1 200 OK"
 then
   echo "Credentials verification succeeded"
 else

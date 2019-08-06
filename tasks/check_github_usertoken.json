@@ -1,0 +1,13 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "input_method": "environment",
+    "description": "Retrieves Github username from the Personal Access Token",
+    "parameters": {
+        "token": {
+            "description":"The GitHub Personal Access Token (replaces username & password, use when 2FA is enabled)",
+            "type": "Optional[String[1]]",
+            "sensitive": true
+        }
+    }
+}
