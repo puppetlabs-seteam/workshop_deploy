@@ -63,5 +63,5 @@ plan workshop_deploy::multimaster(
 
   run_task(workshop_deploy::update_classes, $nodes, 'Update classes...', 'environment' => 'production', '_run_as' => 'root')
 
-  notice("Installation complete, you can login to PE with username 'admin' and password '${pe_admin_pwd}'")
+  warning("Installation complete, you can login to PE with username 'admin' and password '${pe_admin_pwd}'")
 }

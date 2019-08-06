@@ -53,5 +53,5 @@ plan workshop_deploy::hydra(
 
   run_task(workshop_deploy::create_webhook_to_aws, $master, 'Creating Webhook...', $gh_params + {'_run_as' => 'root'})
 
-  notice("Installation complete, you can login to PE with username 'admin' and password 'puppetlabs'")
+  warning("Installation complete, you can login to PE with username 'admin' and password 'puppetlabs'")
 }
