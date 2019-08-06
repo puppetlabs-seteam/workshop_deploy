@@ -16,18 +16,17 @@ plan workshop_deploy::targets(
     }
   }
 
-
   if $bastion == false {
-    notice('Info: Not using the Bastion account for AWS.')
-    notice("Info: Using AWS region: ${awsregion}")
-    notice("Info: Using AWS user: ${awsuser}")
+    warning('Info: Not using the Bastion account for AWS.')
+    warning("Info: Using AWS region: ${awsregion}")
+    warning("Info: Using AWS user: ${awsuser}")
     run_task(workshop_deploy::awskit_ensure_prereqs, 'localhost', 'Ensuring AWSkit prereqs are met... ' )
     run_script('workshop_deploy/awskit_deploy_targets.sh', 'localhost', 'Deploy workshop targets on AWS using AWSKit... ', 'arguments' => [ "bastion=${bastion}", "awsregion=${awsregion}", "awsuser=${awsuser}", "amount=${amount}" ] )
   }
   elsif $bastion == true {
-    notice("Info: Using the Bastion account for AWS, make sure 'source ./scripts/exportcreds.sh' has been run!")
-    notice("Info: Using AWS region: ${awsregion}")
-    notice("Info: Using AWS user: ${awsuser}")
+    warning("Info: Using the Bastion account for AWS, make sure 'source ./scripts/exportcreds.sh' has been run!")
+    warning("Info: Using AWS region: ${awsregion}")
+    warning("Info: Using AWS user: ${awsuser}")
     $awskeyid   = system::env('AWS_ACCESS_KEY_ID')
     $awssecret  = system::env('AWS_SECRET_ACCESS_KEY')
     $awssession = system::env('AWS_SESSION_TOKEN')
