@@ -1,7 +1,7 @@
 plan workshop_deploy::hydra_prep_targets(){
   out::message('Processing Windows nodes...')
   $winnodes = get_targets('allwindows')
-  run_task(puppet_agent::install, $winnodes, 'Installing Puppet Agent on Windows...')
+  run_task(puppet_agent::install, $winnodes, 'Installing Puppet Agent on Windows...', install_options => 'PUPPET_AGENT_STARTUP_MODE=Manual')
   $winnodes.each |$node| {
     $namearray = split($node.name, '[.]')
     run_command("Set-ItemProperty “HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\” –Name Domain –Value 'classroom.puppet.com'", $node, 'Setting Primary DNS Suffix...')
