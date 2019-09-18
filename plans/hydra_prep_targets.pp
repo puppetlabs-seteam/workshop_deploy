@@ -11,7 +11,5 @@ plan workshop_deploy::hydra_prep_targets(){
   out::message('Processing Linux nodes...')
   $linnodes = get_targets('alllinux')
   run_task(puppet_agent::install, $linnodes, 'Installing Puppet Agent on Linux...','_run_as' => 'root')
-  $linnodes.each |$node| {
-    run_command("sed -i -r -e '/^\\s*Defaults\\s+secure_path/ s[=(.*)[=\\1:/opt/puppetlabs/bin[' /etc/sudoers", $node, 'Adding Puppet path to sudoers...', '_run_as' => 'root')
-  }
+  run_command("sed -i -r -e '/^\\s*Defaults\\s+secure_path/ s[=(.*)[=\\1:/opt/puppetlabs/bin[' /etc/sudoers", $linnodes, 'Adding Puppet path to sudoers...', '_run_as' => 'root')
 }
