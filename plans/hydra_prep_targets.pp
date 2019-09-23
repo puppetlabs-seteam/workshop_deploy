@@ -2,9 +2,9 @@ plan workshop_deploy::hydra_prep_targets(){
   out::message('Processing Windows nodes...')
   $winnodes = get_targets('allwindows')
   run_task(puppet_agent::install, $winnodes, 'Installing Puppet Agent on Windows...', install_options => 'PUPPET_AGENT_STARTUP_MODE=Manual')
+  run_command("Set-ItemProperty “HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\” –Name Domain –Value 'classroom.puppet.com'", $winnodes, 'Setting Primary DNS Suffix...')
   $winnodes.each |$node| {
     $namearray = split($node.name, '[.]')
-    run_command("Set-ItemProperty “HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\” –Name Domain –Value 'classroom.puppet.com'", $node, 'Setting Primary DNS Suffix...')
     run_command("Rename-Computer -NewName ${namearray[0]} -Restart -Force", $node, 'Renaming computer to student name...')
   }
   out::message('Windows nodes will now reboot, please allow 5 minutes for this to complete.')
