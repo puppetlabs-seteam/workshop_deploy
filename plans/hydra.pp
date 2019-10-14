@@ -22,7 +22,7 @@ plan workshop_deploy::hydra(
   wait_until_available($master, description => 'Verifying PE Master on AWS is available...', wait_time => 30, retry_interval => 5)
 
   #Make sure CD4PE is not deployed
-  $r = run_command('netstat -an | grep 8888', $master, 'Make sure CD4PE is not installed...', '_run_as' => 'root', '_catch_errors' => true)
+  $r = run_command('docker ps | grep cd4pe', $master, 'Make sure CD4PE is not installed...', '_run_as' => 'root', '_catch_errors' => true)
   if $r.ok {
     fail('You must deploy this Hydra environment **without** CD4PE for the Bolt Workshop!')
   }
@@ -52,6 +52,7 @@ plan workshop_deploy::hydra(
   run_command('/opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --no-splay --no-usecacheonfailure --verbose', $master, 'Run Puppet Agent to apply classification changes...', '_run_as' => 'root')
 
   run_task(workshop_deploy::create_webhook_to_aws, $master, 'Creating Webhook...', $gh_params + {'_run_as' => 'root'})
+  run_task(workshop_deploy::configure_autosign, $master, 'Configure Autosigning...', '_run_as' => 'root')
 
   warning("Installation complete, you can login to PE with username 'admin' and password 'puppetlabs'")
 }
