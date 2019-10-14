@@ -5,11 +5,8 @@ plan workshop_deploy::hydra_prep_targets(){
   run_command("Set-ItemProperty “HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\” –Name Domain –Value 'classroom.puppet.com'", $winnodes, 'Setting Primary DNS Suffix...')
   $winnodes.each |$node| {
     $namearray = split($node.name, '[.]')
-    $result = run_command("Rename-Computer -NewName ${namearray[0]} -Restart -Force",
-      $node, 'Renaming computer to student name...', '_catch_errors' => true).first
-    unless $result.ok {
-      out::message("Error renaming ${node.name}: ${result.error.message}, ${result['stderr']}")
-    }
+    $result = run_command("if (\$Env:ComputerName -ne '${namearray[0]}') { Rename-Computer -NewName '${namearray[0]}' -Restart -Force }",
+      $node, 'Renaming computer to student name...')
   }
   out::message('Windows nodes will now reboot, please allow 5 minutes for this to complete.')
   out::message('Processing Linux nodes...')
